@@ -152,19 +152,22 @@
             position: sticky;
             left: 0;
             z-index: 20;
-            /* Background set inline or via utility to handle row hover */
+            /* Background color set dynamically via JS/HTML classes */
         }
         /* Shadow for sticky column to indicate scroll */
         .sticky-col::after {
             content: '';
             position: absolute;
             top: 0;
-            right: 0;
+            right: -4px;
             bottom: 0;
             width: 4px;
             background: linear-gradient(to right, rgba(0,0,0,0.05), transparent);
             pointer-events: none;
         }
+
+        /* Table border fix */
+        table { border-spacing: 0; border-collapse: separate; }
 
         /* Scroll Masks */
         .scroll-mask-right {
@@ -287,20 +290,20 @@
 
                         <!-- Action Area -->
                         <div class="mt-8 pt-6 border-t border-slate-700/50 space-y-6">
-                            <!-- Bug Switch -->
-                            <div class="flex items-center justify-between group bg-red-900/10 p-3.5 rounded-xl border border-transparent hover:border-red-900/30 active:bg-red-900/20 transition-all cursor-pointer" onclick="document.getElementById('bug-switch').click()">
+                            <!-- Bug Switch (Fixed Event Handling) -->
+                            <label class="flex items-center justify-between group bg-red-900/10 p-3.5 rounded-xl border border-transparent hover:border-red-900/30 active:bg-red-900/20 transition-all cursor-pointer">
                                 <div>
-                                    <label class="flex items-center gap-2 text-xs font-bold text-red-400 pointer-events-none">
+                                    <span class="flex items-center gap-2 text-xs font-bold text-red-400">
                                         <span class="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                                         バグ混入 (Chaos Injection)
-                                    </label>
-                                    <p class="text-[10px] text-slate-500 mt-1 pointer-events-none">CPUの計算ミスを再現します</p>
+                                    </span>
+                                    <p class="text-[10px] text-slate-500 mt-1">CPUの計算ミスを再現します</p>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer p-2 -m-2">
-                                    <input type="checkbox" id="bug-switch" class="sr-only peer" onclick="event.stopPropagation()">
+                                <div class="relative inline-flex items-center p-2 -m-2">
+                                    <input type="checkbox" id="bug-switch" class="sr-only peer">
                                     <div class="w-10 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[10px] after:left-[10px] after:bg-slate-300 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600 peer-checked:after:bg-white transition-colors duration-300"></div>
-                                </label>
-                            </div>
+                                </div>
+                            </label>
 
                             <!-- Execute Button -->
                             <button onclick="runCalculation()" class="relative w-full group overflow-hidden rounded-xl p-[1px] active:scale-[0.98] transition-transform shadow-lg shadow-cyan-900/20">
@@ -533,105 +536,108 @@
 
         // --- Computation Engine ---
         function runCalculation() {
-            const funcType = document.getElementById('func-select').value;
-            const x = parseFloat(document.getElementById('input-x-val').value);
-            const sliderVal = parseInt(document.getElementById('epsilon-slider').value);
-            const epsilon = Math.pow(10, -(sliderVal));
-            hasBug = document.getElementById('bug-switch').checked;
+            try {
+                const funcType = document.getElementById('func-select').value;
+                const x = parseFloat(document.getElementById('input-x-val').value);
+                const sliderVal = parseInt(document.getElementById('epsilon-slider').value);
+                const epsilon = Math.pow(10, -(sliderVal));
+                hasBug = document.getElementById('bug-switch').checked;
 
-            const viz = document.getElementById('viz-container');
-            const tbody = document.getElementById('ledger-body');
-            const statusBadge = document.getElementById('status-badge');
-            const ledgerStatus = document.getElementById('ledger-status');
-            const finalVerdict = document.getElementById('final-verdict');
-            const ledgerHint = document.getElementById('ledger-hint');
+                const viz = document.getElementById('viz-container');
+                const tbody = document.getElementById('ledger-body');
+                const statusBadge = document.getElementById('status-badge');
+                const ledgerStatus = document.getElementById('ledger-status');
+                const finalVerdict = document.getElementById('final-verdict');
+                const ledgerHint = document.getElementById('ledger-hint');
 
-            // Fade out hint
-            if (ledgerHint && !ledgerHint.classList.contains('hidden')) {
-                ledgerHint.style.opacity = '0';
-                ledgerHint.style.height = '0';
-                ledgerHint.style.padding = '0';
-                ledgerHint.style.border = 'none';
-                setTimeout(() => ledgerHint.classList.add('hidden'), 500);
-            }
-
-            // Processing UI
-            viz.innerHTML = `
-                <div class="flex flex-col items-center justify-center space-y-4 animate-pulse py-10 w-full">
-                    <div class="w-12 h-12 rounded-full border-4 border-t-cyan-500 border-r-transparent border-b-blue-500 border-l-transparent animate-spin"></div>
-                    <div class="text-[10px] font-mono text-cyan-400 tracking-widest flex gap-1">
-                        <span>解析中</span>
-                        <span class="animate-[pulse_1s_infinite]">.</span>
-                        <span class="animate-[pulse_1s_infinite_0.2s]">.</span>
-                        <span class="animate-[pulse_1s_infinite_0.4s]">.</span>
-                    </div>
-                </div>
-            `;
-            statusBadge.innerText = "計算中..."; 
-            statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-yellow-500/20 text-yellow-500 border border-yellow-500/20";
-            ledgerStatus.innerText = "記録中...";
-            ledgerStatus.className = "text-[9px] sm:text-[10px] font-mono text-slate-400 bg-slate-100 px-2.5 py-1 rounded border border-slate-200 animate-pulse";
-            finalVerdict.className = "hidden";
-            tbody.innerHTML = ''; // Clear ledger immediately
-
-            // DELAY SIMULATION (Enhanced for ADIC realism)
-            // Normal: 600ms
-            // ADIC: 1500ms ~ 4000ms based on precision
-            const delay = currentMode === 'normal' ? 600 : 1500 + (sliderVal * 500);
-
-            setTimeout(() => {
-                let resultObj;
-                if (currentMode === 'normal') {
-                    resultObj = computeNormal(funcType, x, hasBug);
-                    renderVizNormal(resultObj.steps, viz);
-                    renderLedgerNormal(resultObj.steps, tbody);
-                    
-                    statusBadge.innerText = "完了"; statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-slate-700 text-slate-300 border border-slate-600";
-                    ledgerStatus.innerText = "未検証";
-                    ledgerStatus.className = "text-[9px] sm:text-[10px] font-mono text-slate-400 bg-slate-100 px-2.5 py-1 rounded border border-slate-200";
-                } else {
-                    resultObj = computeADIC(funcType, x, epsilon, hasBug);
-                    renderVizADIC(resultObj.steps, viz);
-                    
-                    // Animated Ledger Entry
-                    animateLedgerEntries(resultObj.steps, tbody, () => {
-                        const isVerified = resultObj.verified;
-                        finalVerdict.className = "block p-6 sm:p-8 bg-slate-50 text-center animate-fade-in-up border-t border-slate-200";
-                        
-                        // Proof ID (Hash)
-                        const proofId = isVerified ? generateProofHash() : "INVALID_PROOF_SIGNATURE";
-
-                        if (isVerified) {
-                            statusBadge.innerText = "検証成功"; statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-green-500/10 text-green-500 border border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.3)]";
-                            ledgerStatus.innerText = "安全 (SECURE)"; ledgerStatus.className="text-[9px] sm:text-[10px] font-mono text-green-600 bg-green-50 px-2.5 py-1 rounded border border-green-200 font-bold";
-
-                            finalVerdict.innerHTML = `
-                                <div class="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-green-100 mb-3 sm:mb-4">
-                                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                                <h4 class="text-lg sm:text-xl font-bold text-slate-800 mb-1">検証成功 (Verification Successful)</h4>
-                                <p class="text-xs sm:text-sm text-slate-500">
-                                    数学的な整合性が証明されました。<br>
-                                    <span class="font-mono text-[9px] sm:text-[10px] text-slate-400 mt-2 block break-all">Proof ID: ${proofId}</span>
-                                </p>
-                            `;
-                        } else {
-                            statusBadge.innerText = "検証失敗"; statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-red-500/10 text-red-500 border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]";
-                            ledgerStatus.innerText = "危険 (CORRUPT)"; ledgerStatus.className="text-[9px] sm:text-[10px] font-mono text-red-600 bg-red-50 px-2.5 py-1 rounded border border-red-200 font-bold";
-
-                            finalVerdict.innerHTML = `
-                                <div class="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-red-100 mb-3 sm:mb-4 animate-bounce">
-                                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                                <h4 class="text-lg sm:text-xl font-bold text-red-600 mb-1">検証失敗 (Verification Failed)</h4>
-                                <p class="text-xs sm:text-sm text-slate-600">
-                                    許容誤差を超える致命的な不整合を検出しました。
-                                </p>
-                            `;
-                        }
-                    });
+                // Fade out hint
+                if (ledgerHint && !ledgerHint.classList.contains('hidden')) {
+                    ledgerHint.style.opacity = '0';
+                    ledgerHint.style.height = '0';
+                    ledgerHint.style.padding = '0';
+                    ledgerHint.style.border = 'none';
+                    setTimeout(() => ledgerHint.classList.add('hidden'), 500);
                 }
-            }, delay);
+
+                // Processing UI
+                viz.innerHTML = `
+                    <div class="flex flex-col items-center justify-center space-y-4 animate-pulse py-10 w-full">
+                        <div class="w-12 h-12 rounded-full border-4 border-t-cyan-500 border-r-transparent border-b-blue-500 border-l-transparent animate-spin"></div>
+                        <div class="text-[10px] font-mono text-cyan-400 tracking-widest flex gap-1">
+                            <span>解析中</span>
+                            <span class="animate-[pulse_1s_infinite]">.</span>
+                            <span class="animate-[pulse_1s_infinite_0.2s]">.</span>
+                            <span class="animate-[pulse_1s_infinite_0.4s]">.</span>
+                        </div>
+                    </div>
+                `;
+                statusBadge.innerText = "計算中..."; 
+                statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-yellow-500/20 text-yellow-500 border border-yellow-500/20";
+                ledgerStatus.innerText = "記録中...";
+                ledgerStatus.className = "text-[9px] sm:text-[10px] font-mono text-slate-400 bg-slate-100 px-2.5 py-1 rounded border border-slate-200 animate-pulse";
+                finalVerdict.className = "hidden";
+                tbody.innerHTML = ''; // Clear ledger immediately
+
+                // DELAY SIMULATION
+                const delay = currentMode === 'normal' ? 600 : 1500 + (sliderVal * 500);
+
+                setTimeout(() => {
+                    let resultObj;
+                    if (currentMode === 'normal') {
+                        resultObj = computeNormal(funcType, x, hasBug);
+                        renderVizNormal(resultObj.steps, viz);
+                        renderLedgerNormal(resultObj.steps, tbody);
+                        
+                        statusBadge.innerText = "完了"; statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-slate-700 text-slate-300 border border-slate-600";
+                        ledgerStatus.innerText = "未検証";
+                        ledgerStatus.className = "text-[9px] sm:text-[10px] font-mono text-slate-400 bg-slate-100 px-2.5 py-1 rounded border border-slate-200";
+                    } else {
+                        resultObj = computeADIC(funcType, x, epsilon, hasBug);
+                        renderVizADIC(resultObj.steps, viz);
+                        
+                        // Animated Ledger Entry
+                        animateLedgerEntries(resultObj.steps, tbody, () => {
+                            const isVerified = resultObj.verified;
+                            finalVerdict.className = "block p-6 sm:p-8 bg-slate-50 text-center animate-fade-in-up border-t border-slate-200";
+                            
+                            // Proof ID (Hash)
+                            const proofId = isVerified ? generateProofHash() : "INVALID_PROOF_SIGNATURE";
+
+                            if (isVerified) {
+                                statusBadge.innerText = "検証成功"; statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-green-500/10 text-green-500 border border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.3)]";
+                                ledgerStatus.innerText = "安全 (SECURE)"; ledgerStatus.className="text-[9px] sm:text-[10px] font-mono text-green-600 bg-green-50 px-2.5 py-1 rounded border border-green-200 font-bold";
+
+                                finalVerdict.innerHTML = `
+                                    <div class="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-green-100 mb-3 sm:mb-4">
+                                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    </div>
+                                    <h4 class="text-lg sm:text-xl font-bold text-slate-800 mb-1">検証成功 (Verification Successful)</h4>
+                                    <p class="text-xs sm:text-sm text-slate-500">
+                                        数学的な整合性が証明されました。<br>
+                                        <span class="font-mono text-[9px] sm:text-[10px] text-slate-400 mt-2 block break-all">Proof ID: ${proofId}</span>
+                                    </p>
+                                `;
+                            } else {
+                                statusBadge.innerText = "検証失敗"; statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-red-500/10 text-red-500 border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]";
+                                ledgerStatus.innerText = "危険 (CORRUPT)"; ledgerStatus.className="text-[9px] sm:text-[10px] font-mono text-red-600 bg-red-50 px-2.5 py-1 rounded border border-red-200 font-bold";
+
+                                finalVerdict.innerHTML = `
+                                    <div class="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-red-100 mb-3 sm:mb-4 animate-bounce">
+                                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </div>
+                                    <h4 class="text-lg sm:text-xl font-bold text-red-600 mb-1">検証失敗 (Verification Failed)</h4>
+                                    <p class="text-xs sm:text-sm text-slate-600">
+                                        許容誤差を超える致命的な不整合を検出しました。
+                                    </p>
+                                `;
+                            }
+                        });
+                    }
+                }, delay);
+            } catch (e) {
+                console.error(e);
+                alert("計算プロセスでエラーが発生しました。");
+            }
         }
 
         // --- Slider & UI Helpers ---
@@ -645,7 +651,7 @@
         document.getElementById('input-x-slider').addEventListener('input', (e) => document.getElementById('input-x-val').value = e.target.value);
         document.getElementById('input-x-val').addEventListener('change', (e) => document.getElementById('input-x-slider').value = e.target.value);
 
-        // --- Logic & Rendering (Enhanced for Dramatic Bugs & Complex Functions) ---
+        // --- Logic & Rendering ---
         function computeNormal(type, x, bug) {
             let steps = [{ name: "入力値 x", val: x }];
             let res = 0;
@@ -677,29 +683,25 @@
                 // Step 1: x^2
                 let t1 = x*x; 
                 let i1 = [t1-width, t1+width]; 
-                steps.push({name: "x^2", interval: i1, check: true}); // Assume basic arithmetic safe for demo flow
+                steps.push({name: "x^2", interval: i1, check: true}); 
 
                 // Step 2: +1
                 let t2 = t1 + 1;
                 let i2 = [i1[0]+1, i1[1]+1];
                 steps.push({name: "+1", interval: i2, check: true});
 
-                // Step 3: ln() -> BUG INJECTION POINT
+                // Step 3: ln()
                 let t3 = Math.log(t2);
-                let c3 = bug ? t3 + 3.0 : t3; // Massive shift
+                let c3 = bug ? t3 + 3.0 : t3; 
                 let i3 = [c3-width, c3+width];
                 let ok3 = (t3 >= i3[0] && t3 <= i3[1]);
                 steps.push({name: "ln", interval: i3, check: ok3});
                 if(!ok3) verified = false;
 
                 // Step 4: sin()
-                let t4 = Math.sin(t3); // True value from corrupted input chain would be diff, but we check consistency with previous node
-                // For demo simplicity, we check if True Math Value is in interval
-                // If previous step corrupted, this interval will likely be consistent with its input but inconsistent with Global Truth
-                // Let's simulate logic consistency check:
-                let c4 = Math.sin(c3); // Computed from previous output
+                let c4 = Math.sin(c3); 
                 let i4 = [c4-width, c4+width];
-                // Verification: Does the interval contain the TRUE mathematical value of sin(ln(x^2+1))?
+                // Verification against True Math Value
                 let trueVal = Math.sin(Math.log(x*x+1));
                 let ok4 = (trueVal >= i4[0] && trueVal <= i4[1]);
                 steps.push({name: "sin", interval: i4, check: ok4});
@@ -708,8 +710,8 @@
             } else {
                 let t = (type==='sin') ? Math.sin(x) : Math.sqrt(x); 
                 let c = t;
-                if(bug && type==='sin') c = -t; // Flip sign
-                if(bug && type==='sqrt') c = t - 1.0; // Big shift
+                if(bug && type==='sin') c = -t; 
+                if(bug && type==='sqrt') c = t - 1.0; 
                 let i = [c - width, c + width];
                 let ok = (t >= i[0] && t <= i[1]);
                 steps.push({ name: type + "(x)", interval: i, check: ok });
@@ -724,6 +726,11 @@
                 const isLast = idx === steps.length - 1;
                 const color = step.check ? 'border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.25)]';
                 const bg = step.check ? 'bg-slate-800' : 'bg-red-900/20';
+                
+                // Safe access to interval
+                const lb = step.interval ? step.interval[0].toFixed(2) : "Err";
+                const ub = step.interval ? step.interval[1].toFixed(2) : "Err";
+
                 html += `
                     <div class="relative flex flex-col items-center group viz-arrow ${isLast ? 'viz-last' : ''}">
                         <div class="w-24 h-24 sm:w-32 sm:h-32 ${bg} rounded-xl border-2 ${color} flex flex-col items-center justify-center p-2 shadow-lg transition-transform hover:scale-105">
@@ -734,7 +741,7 @@
                                     <div class="absolute top-1/2 left-1/2 w-1 h-1 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
                                 </div>
                             </div>
-                            <span class="text-[8px] sm:text-[10px] font-mono text-cyan-100 font-bold tracking-tight">[${step.interval[0].toFixed(2)}, ${step.interval[1].toFixed(2)}]</span>
+                            <span class="text-[8px] sm:text-[10px] font-mono text-cyan-100 font-bold tracking-tight">[${lb}, ${ub}]</span>
                         </div>
                     </div>`;
             });
@@ -746,11 +753,12 @@
             let html = '<div class="flex items-center gap-4 sm:gap-6 px-4 sm:px-0 animate-slide-in">';
             steps.forEach((step, idx) => {
                 const isLast = idx === steps.length - 1;
+                const val = (typeof step.val === 'number') ? step.val.toFixed(3) : "Err";
                 html += `
                     <div class="relative flex flex-col items-center group viz-arrow ${isLast ? 'viz-last' : ''}">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 bg-slate-800 rounded-xl border border-slate-600 flex flex-col items-center justify-center p-2 shadow-lg">
                             <span class="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-wider mb-1">${step.name}</span>
-                            <span class="text-sm sm:text-lg font-mono font-bold text-white">${step.val.toFixed(3)}</span>
+                            <span class="text-sm sm:text-lg font-mono font-bold text-white">${val}</span>
                         </div>
                     </div>`;
             });
@@ -769,15 +777,24 @@
                 
                 const step = steps[index];
                 const rowClass = step.check ? 'hover:bg-slate-50' : 'bg-red-50 hover:bg-red-100';
+                // FIXED: Dynamic sticky column background
+                const stickyBg = step.check ? 'bg-white' : 'bg-red-50';
+                
                 const textClass = step.check ? 'text-slate-600' : 'text-red-700 font-bold';
                 const icon = step.check ? '✓' : '!';
                 const tr = document.createElement('tr');
                 tr.className = `${rowClass} border-b border-slate-50 last:border-0 transition-colors animate-slide-in`;
-                // STICKY COLUMN APPLIED HERE
+                
+                // Robust Number Formatting with Color Class
+                let rangeText = '<span class="text-gray-400 italic">Calc Error</span>';
+                if (step.interval && step.interval.length === 2 && !isNaN(step.interval[0])) {
+                    rangeText = `<span class="text-slate-400">[</span>${step.interval[0].toFixed(5)}, ${step.interval[1].toFixed(5)}<span class="text-slate-400">]</span>`;
+                }
+
                 tr.innerHTML = `
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-400 sticky-col bg-white/95 backdrop-blur">${(index+1).toString().padStart(2,'0')}</td>
+                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-400 sticky-col ${stickyBg}">${(index+1).toString().padStart(2,'0')}</td>
                     <td class="px-4 py-3 sm:px-6 sm:py-4 font-bold ${textClass} text-xs">${step.name}</td>
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs"><span class="text-slate-400">[</span>${step.interval[0].toFixed(5)}, ${step.interval[1].toFixed(5)}<span class="text-slate-400">]</span></td>
+                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-700">${rangeText}</td>
                     <td class="px-4 py-3 sm:px-6 sm:py-4 text-center text-xs font-bold ${step.check?'text-green-600':'text-red-600'}">${icon}</td>
                 `;
                 tbody.appendChild(tr);
@@ -787,7 +804,7 @@
                 if(container) container.scrollTop = container.scrollHeight;
 
                 index++;
-                setTimeout(addRow, 400); // Slower typing for "Heavy Calculation" feel
+                setTimeout(addRow, 400); 
             }
             addRow();
         }
@@ -795,10 +812,13 @@
         function renderLedgerNormal(steps, tbody) {
             let html = '';
             steps.forEach((step, idx) => {
+                // Ensure value exists
+                const valStr = (typeof step.val === 'number' && !isNaN(step.val)) ? step.val.toFixed(5) : "N/A";
+                
                 html += `<tr class="hover:bg-slate-50 border-b border-slate-50 transition-colors animate-slide-in" style="animation-delay: ${idx * 0.1}s">
                     <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-400 sticky-col bg-white">${(idx+1).toString().padStart(2,'0')}</td>
                     <td class="px-4 py-3 sm:px-6 sm:py-4 font-bold text-slate-600 text-xs">${step.name}</td>
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-500">${step.val.toFixed(5)}</td>
+                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-700">${valStr}</td>
                     <td class="px-4 py-3 sm:px-6 sm:py-4 text-center text-slate-300">-</td>
                 </tr>`;
             });
