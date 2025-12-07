@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADIC: 計算保証OS - GhostDrift Lab</title>
+    <title>ADIC: 計算保証OS Core - GhostDrift Lab</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,6 +40,7 @@
                         'swipe-hint': 'swipeHint 2.5s infinite',
                         'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
                         'slide-in': 'slideIn 0.3s ease-out forwards',
+                        'spin-slow': 'spin 3s linear infinite',
                     },
                     keyframes: {
                         swipeHint: {
@@ -143,7 +144,7 @@
 
         /* Typography Optimizations */
         .title-clamp {
-            font-size: clamp(1.5rem, 5vw, 4rem);
+            font-size: clamp(1.75rem, 6vw, 4rem); /* Slightly larger on mobile */
             white-space: nowrap;
         }
         
@@ -152,22 +153,18 @@
             position: sticky;
             left: 0;
             z-index: 20;
-            /* Background color set dynamically via JS/HTML classes */
         }
         /* Shadow for sticky column to indicate scroll */
         .sticky-col::after {
             content: '';
             position: absolute;
             top: 0;
-            right: -4px;
+            right: 0;
             bottom: 0;
             width: 4px;
             background: linear-gradient(to right, rgba(0,0,0,0.05), transparent);
             pointer-events: none;
         }
-
-        /* Table border fix */
-        table { border-spacing: 0; border-collapse: separate; }
 
         /* Scroll Masks */
         .scroll-mask-right {
@@ -181,28 +178,38 @@
     <!-- ==========================================
          HERO SECTION
          ========================================== -->
-    <div class="bg-ghost-900 text-white pb-14 pt-10 shadow-2xl border-b border-slate-700 relative overflow-hidden">
+    <div class="bg-ghost-900 text-white pb-12 pt-10 sm:pb-16 sm:pt-14 shadow-2xl border-b border-slate-700 relative overflow-hidden">
         <!-- Abstract Background -->
         <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-40">
             <div class="absolute -top-[30%] -right-[10%] w-[130vw] h-[130vw] bg-cyan-500/10 rounded-full blur-[100px] animate-pulse-slow"></div>
             <div class="absolute bottom-[0%] -left-[20%] w-[100vw] h-[100vw] bg-blue-600/10 rounded-full blur-[120px]"></div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <header class="mb-10 text-center">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 mb-5 text-[10px] sm:text-xs font-bold tracking-widest text-cyan-300 uppercase bg-slate-800/60 backdrop-blur-md rounded-full border border-slate-600/50 shadow-lg hover:bg-slate-800/80 transition-colors cursor-default select-none">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 relative z-10">
+            <!-- Header Content -->
+            <header class="mb-10 sm:mb-12 text-left md:text-center">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 mb-5 text-[10px] sm:text-xs font-bold tracking-widest text-cyan-300 uppercase bg-slate-800/60 backdrop-blur-md rounded-full border border-slate-600/50 shadow-lg hover:bg-slate-800/80 transition-colors cursor-default select-none">
                     <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
-                    GhostDrift Lab Tech Demo
+                    GhostDrift Core OS v1.0
                 </div>
                 
-                <h1 class="font-bold tracking-tight mb-4 font-sans leading-none title-clamp flex items-baseline justify-center gap-3 sm:gap-5">
+                <!-- Title -->
+                <h1 class="font-bold tracking-tight mb-5 font-sans leading-none title-clamp flex items-baseline justify-start md:justify-center gap-2 sm:gap-4 flex-wrap">
                     <span class="text-white drop-shadow-md">ADIC</span>
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 font-light filter drop-shadow-sm">計算保証 OS</span>
                 </h1>
                 
-                <p class="text-slate-300 max-w-3xl mx-auto text-sm sm:text-lg leading-relaxed px-2 font-medium opacity-90">
-                    計算結果の「正しさ」を数学的に証明する、<br class="block sm:hidden">次世代の検証オペレーティングシステム。
-                </p>
+                <!-- Main Copy (Left on mobile, Center on desktop) -->
+                <div class="max-w-3xl mx-0 md:mx-auto">
+                    <p class="text-slate-300 text-sm sm:text-lg leading-7 sm:leading-relaxed font-medium opacity-90 mb-2">
+                        もし計算結果が「改ざん」されていたら、その実験は無防備だ。
+                    </p>
+                    <p class="text-slate-400 text-xs sm:text-base leading-6 sm:leading-relaxed">
+                        <span class="font-semibold text-cyan-300">ADIC</span> は「壊される前提」で計算を守る。<br class="hidden sm:inline">
+                        Ledgerで破綻を検知し、正当性を数学的に証明する。
+                    </p>
+                </div>
             </header>
 
             <!-- Main Interface Grid -->
@@ -211,32 +218,39 @@
                 <!-- CONTROL PANEL (Left) -->
                 <div class="lg:col-span-4 space-y-5">
                     
-                    <!-- Mode Selector -->
+                    <!-- World Line Selector -->
                     <div class="bg-slate-800/80 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-slate-700/80 shadow-xl ring-1 ring-white/5">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                            動作モード
+                            世界線セレクタ
                         </h3>
-                        <div class="flex flex-col xs:flex-row bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/50 gap-2 xs:gap-0">
-                            <button id="mode-normal" onclick="setMode('normal')" class="flex-1 py-3 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2">
-                                普通の電卓
-                            </button>
-                            <button id="mode-adic" onclick="setMode('adic')" class="flex-1 py-3 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg">
-                                <span class="relative flex h-2.5 w-2.5 flex-shrink-0">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+                        <div class="flex flex-col gap-3">
+                            <button id="mode-normal" onclick="setMode('normal')" class="w-full py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 flex items-center justify-between group">
+                                <span class="flex items-center gap-2.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-slate-500 group-hover:bg-slate-400"></span>
+                                    バグを通す世界線
                                 </span>
-                                ADIC 検証
+                                <span class="text-[10px] opacity-60 font-normal">普通の電卓</span>
+                            </button>
+                            <button id="mode-adic" onclick="setMode('adic')" class="w-full py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 flex items-center justify-between shadow-lg relative overflow-hidden group">
+                                <span class="relative z-10 flex items-center gap-2.5">
+                                    <span class="relative flex h-2.5 w-2.5 flex-shrink-0">
+                                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+                                    </span>
+                                    バグで止まる世界線
+                                </span>
+                                <span class="relative z-10 text-[10px] opacity-80 font-normal text-cyan-100">ADIC OS</span>
                             </button>
                         </div>
-                        <div class="relative overflow-hidden min-h-[3.5em]">
-                             <p id="mode-desc" class="mt-4 text-xs text-slate-400 leading-relaxed border-t border-slate-700/50 pt-3 transition-opacity duration-300">
+                        <div class="relative overflow-hidden min-h-[4em] sm:min-h-[3.5em]">
+                             <p id="mode-desc" class="mt-4 text-[11px] text-slate-400 leading-relaxed border-t border-slate-700/50 pt-3 transition-opacity duration-300">
                                 <!-- JS injected -->
-                            </p>
+                             </p>
                         </div>
                     </div>
 
-                    <!-- Input Parameters -->
+                    <!-- Input Parameters & Scenario -->
                     <div class="bg-slate-800/80 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-slate-700/80 shadow-xl ring-1 ring-white/5">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
@@ -244,31 +258,53 @@
                         </h3>
                         
                         <div class="space-y-6">
+                            <!-- Scenario Selector -->
+                            <div class="bg-slate-900/40 p-3.5 rounded-xl border border-slate-700/50">
+                                <label class="block text-[10px] font-bold text-slate-300 mb-2 pl-1 uppercase tracking-wide">
+                                    用途シナリオ
+                                </label>
+                                <select id="scenario-select" onchange="applyScenario()" class="w-full bg-slate-900 border border-slate-600 text-white text-xs sm:text-sm rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 block p-3 cursor-pointer shadow-sm">
+                                    <option value="plain">素の数値検算 (Core Demo)</option>
+                                    <option value="energy">電力需給調整 (Energy OS)</option>
+                                    <option value="security">異常検知スコア (Security OS)</option>
+                                    <option value="legal">ローン金利計算 (Legal OS)</option>
+                                </select>
+                                <p id="scenario-desc" class="mt-3 text-[10px] text-slate-500 leading-normal">
+                                    素の関数でADICの基本挙動を確認。
+                                </p>
+                            </div>
+
+                            <hr class="border-slate-700/50">
+
                             <!-- Function Select -->
-                            <div class="group">
-                                <label class="block text-xs font-semibold text-cyan-400 mb-2 pl-1">計算する関数</label>
+                            <div>
+                                <label class="block text-xs font-semibold text-cyan-400 mb-1.5 pl-1">計算関数</label>
                                 <div class="relative">
-                                    <select id="func-select" class="w-full bg-slate-900 border border-slate-600 text-white text-sm rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 block p-3 pr-10 appearance-none transition-colors hover:border-slate-500 cursor-pointer shadow-sm">
+                                    <select id="func-select" class="w-full bg-slate-900/60 border border-slate-600 text-slate-300 text-xs sm:text-sm rounded-lg p-3 appearance-none cursor-not-allowed opacity-80" disabled>
+                                        <!-- Auto-populated via Scenario -->
                                         <option value="log">自然対数 ln(x)</option>
                                         <option value="sqrt">平方根 √x</option>
                                         <option value="sin">正弦 sin(x)</option>
-                                        <option value="complex_adv">多段合成関数 sin(ln(x² + 1))</option>
+                                        <option value="complex_adv">多段合成 sin(ln(x² + 1))</option>
                                     </select>
-                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </div>
                                 </div>
+                                <p class="mt-2 text-[10px] text-slate-500 leading-tight px-1">
+                                    ※ 関数はシナリオに応じて自動設定。セレクタはカーネル定義の可視化用。
+                                </p>
                             </div>
 
                             <!-- Input X -->
                             <div>
                                 <label class="block text-xs font-semibold text-cyan-400 mb-2 flex justify-between pl-1">
                                     <span>入力値 (x)</span>
-                                    <span class="text-slate-500 font-normal text-[10px]">範囲: 0.1 - 10.0</span>
+                                    <span class="text-slate-500 font-normal text-[10px]">0.1 - 10.0</span>
                                 </label>
-                                <div class="flex items-center gap-3 bg-slate-900/50 p-3 rounded-lg border border-slate-700/50 shadow-inner">
-                                    <input type="range" id="input-x-slider" min="0.1" max="10" step="0.1" value="2.0" class="w-full h-8 cursor-pointer">
-                                    <input type="number" id="input-x-val" value="2.0" class="w-16 bg-slate-800 border border-slate-600 text-cyan-300 text-sm font-bold rounded p-2 text-center mono focus:ring-1 focus:ring-cyan-500 outline-none shadow-sm">
+                                <div class="flex items-center gap-3 bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/50">
+                                    <input type="range" id="input-x-slider" min="0.1" max="10" step="0.1" value="2.0" class="w-full h-6 cursor-pointer">
+                                    <input type="number" id="input-x-val" value="2.0" class="w-16 bg-slate-800 border border-slate-600 text-cyan-300 text-xs sm:text-sm font-bold rounded p-1.5 text-center mono outline-none focus:ring-1 focus:ring-cyan-500">
                                 </div>
                             </div>
 
@@ -278,9 +314,9 @@
                                     <span>検証精度 (許容誤差 ε)</span>
                                     <span id="epsilon-display" class="mono text-xs bg-slate-900 px-2 py-0.5 rounded text-cyan-300 border border-slate-700">0.001</span>
                                 </label>
-                                <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50 shadow-inner">
-                                    <input type="range" id="epsilon-slider" min="1" max="5" step="1" value="3" class="w-full h-8 mb-1 cursor-pointer">
-                                    <div class="flex justify-between text-[10px] text-slate-500 font-sans px-1 select-none">
+                                <div class="bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/50">
+                                    <input type="range" id="epsilon-slider" min="1" max="5" step="1" value="3" class="w-full h-6 mb-1 cursor-pointer">
+                                    <div class="flex justify-between text-[9px] text-slate-600 px-1 mt-1 font-sans">
                                         <span>高速 (粗)</span>
                                         <span>厳密 (細)</span>
                                     </div>
@@ -289,50 +325,68 @@
                         </div>
 
                         <!-- Action Area -->
-                        <div class="mt-8 pt-6 border-t border-slate-700/50 space-y-6">
-                            <!-- Bug Switch (Fixed Event Handling) -->
-                            <label class="flex items-center justify-between group bg-red-900/10 p-3.5 rounded-xl border border-transparent hover:border-red-900/30 active:bg-red-900/20 transition-all cursor-pointer">
+                        <div class="mt-8 pt-6 border-t border-slate-700/50 space-y-5">
+                            <!-- Bug Switch (Patched for reliable toggle) -->
+                            <label for="bug-switch" class="flex items-center justify-between group bg-red-900/10 p-3.5 rounded-xl border border-transparent hover:border-red-900/30 transition-all cursor-pointer">
                                 <div>
                                     <span class="flex items-center gap-2 text-xs font-bold text-red-400">
                                         <span class="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                                        バグ混入 (Chaos Injection)
+                                        バグ混入 (Chaos)
                                     </span>
-                                    <p class="text-[10px] text-slate-500 mt-1">CPUの計算ミスを再現します</p>
+                                    <p id="bug-desc" class="text-[10px] text-slate-500 mt-1">
+                                        CPU計算ミス・ビット反転を再現
+                                    </p>
                                 </div>
-                                <div class="relative inline-flex items-center p-2 -m-2">
-                                    <input type="checkbox" id="bug-switch" class="sr-only peer">
-                                    <div class="w-10 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[10px] after:left-[10px] after:bg-slate-300 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600 peer-checked:after:bg-white transition-colors duration-300"></div>
+                                <div class="relative inline-flex items-center p-1">
+                                    <input
+                                        type="checkbox"
+                                        id="bug-switch"
+                                        class="sr-only peer"
+                                        onchange="onBugChange(this.checked)"
+                                    >
+                                    <div class="w-10 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-300 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600 peer-checked:after:bg-white transition-colors duration-300"></div>
                                 </div>
                             </label>
 
-                            <!-- Execute Button -->
-                            <button onclick="runCalculation()" class="relative w-full group overflow-hidden rounded-xl p-[1px] active:scale-[0.98] transition-transform shadow-lg shadow-cyan-900/20">
-                                <span class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 opacity-80 group-hover:opacity-100 transition-opacity duration-300"></span>
-                                <div class="relative bg-slate-900 text-white group-hover:bg-slate-800 transition-colors rounded-xl py-4 px-4 flex items-center justify-center gap-3">
-                                    <span class="font-bold tracking-wider text-sm group-hover:text-cyan-200 transition-colors">計算を実行する</span>
-                                    <svg class="w-4 h-4 text-cyan-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                </div>
-                            </button>
+                            <!-- Execute Button + Compare -->
+                            <div class="space-y-3">
+                                <button onclick="runCalculation()" class="relative overflow-hidden group w-full rounded-xl shadow-lg shadow-cyan-900/20 active:scale-[0.98] transition-transform">
+                                    <span class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 opacity-80 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                    <div class="relative bg-slate-900/80 border border-slate-700/80 rounded-xl py-4 px-4 flex items-center justify-center gap-3">
+                                        <span class="font-bold tracking-wider text-sm group-hover:text-cyan-200 transition-colors">
+                                            計算を実行する
+                                        </span>
+                                        <svg class="w-4 h-4 text-cyan-200 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                    </div>
+                                </button>
+                            
+                                <button id="btn-compare" type="button" disabled class="w-full px-4 py-3 rounded-xl border border-slate-600 bg-slate-900/90 text-[10px] sm:text-xs font-mono text-slate-300 flex items-center justify-center gap-2 hover:bg-slate-800 active:scale-[0.98] transition disabled:opacity-40 disabled:cursor-not-allowed">
+                                    <span>反対の世界線をリプレイ</span>
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- OUTPUT PANEL (Right) -->
-                <div class="lg:col-span-8 flex flex-col gap-4 sm:gap-8">
+                <div class="lg:col-span-8 flex flex-col gap-5 sm:gap-6">
                     
                     <!-- Visualization Panel -->
-                    <div class="bg-slate-800/90 backdrop-blur-md rounded-2xl border border-slate-700/80 shadow-xl overflow-hidden flex flex-col min-h-[280px] sm:min-h-[360px] relative ring-1 ring-white/5">
-                        <div class="bg-slate-900/50 px-5 py-4 border-b border-slate-700 flex justify-between items-center z-10">
+                    <div class="bg-slate-800/90 backdrop-blur-md rounded-2xl border border-slate-700/80 shadow-xl overflow-hidden flex flex-col min-h-[260px] sm:min-h-[320px] relative ring-1 ring-white/5">
+                        <div class="bg-slate-900/50 px-5 py-3 border-b border-slate-700 flex justify-between items-center z-10">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                                 計算プロセス可視化
                             </h3>
                             <div id="status-badge" class="px-2.5 py-1 rounded-md text-[9px] sm:text-[10px] font-mono font-bold bg-slate-800 text-slate-500 border border-slate-600 transition-all duration-300">
-                                待機中
+                                WAITING
                             </div>
                         </div>
                         
-                        <!-- Swipe Hint for Mobile -->
+                        <!-- Swipe Hint -->
                         <div class="lg:hidden absolute bottom-3 right-3 z-20 text-[10px] text-slate-500 flex items-center gap-1 animate-swipe-hint pointer-events-none select-none">
                             <span>Swipe</span> <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </div>
@@ -343,68 +397,168 @@
                         <!-- Content Container -->
                         <div class="flex-1 p-4 sm:p-8 relative flex items-center justify-start sm:justify-center overflow-x-auto z-10 scroll-mask-right" id="viz-container">
                             <div class="w-full text-center space-y-3 opacity-50 pt-10 sm:pt-0 select-none">
-                                <div class="inline-block p-3 rounded-full bg-slate-700/50 mb-1">
-                                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                </div>
-                                <p class="text-slate-400 text-xs sm:text-sm font-sans">左のパネルで設定して<br class="block sm:hidden">「計算を実行する」を押してください</p>
+                                <p class="text-slate-400 text-xs sm:text-sm font-sans">
+                                    世界線を選択し、計算を実行してください
+                                </p>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Worldline Comparison Panel -->
+                    <div id="worldline-summary-panel" class="bg-slate-900/90 text-slate-100 rounded-2xl border border-slate-700/80 shadow-xl ring-1 ring-white/5 px-5 py-5 sm:px-6 sm:py-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 13h8l-2 3m2-3l-2-3m5-4h7m-7 4h4m-4 4h6m-6 4h3"/>
+                                </svg>
+                                世界線比較ダッシュボード
+                            </h3>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[10px] sm:text-xs">
+                            <!-- Normal side -->
+                            <div class="bg-slate-800/80 rounded-xl border border-slate-700/80 p-4 space-y-2">
+                                <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-700/50">
+                                    <span class="font-bold text-slate-100">バグを通す世界線</span>
+                                    <span class="text-[9px] text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded">NORMAL</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">最終値</span>
+                                    <span id="summary-normal-value" class="font-mono text-xs text-slate-100 font-bold">–</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">真の値との差</span>
+                                    <span id="summary-normal-error" class="font-mono text-xs text-amber-300 font-bold">–</span>
+                                </div>
+                                <div class="mt-2 text-[9px] text-slate-400 bg-slate-900/50 p-2 rounded" id="summary-normal-status">
+                                    まだ計算されていません
+                                </div>
+                            </div>
+
+                            <!-- ADIC side -->
+                            <div class="bg-slate-900 rounded-xl border border-cyan-700/80 p-4 space-y-2 relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-16 h-16 bg-cyan-500/10 rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+                                <div class="flex items-center justify-between mb-2 pb-2 border-b border-cyan-900/50">
+                                    <span class="font-bold text-cyan-100">バグで止まる世界線</span>
+                                    <span class="text-[9px] text-cyan-300 bg-cyan-950/50 px-1.5 py-0.5 rounded border border-cyan-900">ADIC OS</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">証明された区間</span>
+                                    <span id="summary-adic-interval" class="font-mono text-[10px] text-cyan-200 text-right truncate ml-2">–</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">区間幅</span>
+                                    <span id="summary-adic-width" class="font-mono text-xs text-cyan-300 font-bold">–</span>
+                                </div>
+                                <div class="mt-2 text-[9px] text-cyan-100/70 bg-cyan-950/30 p-2 rounded border border-cyan-900/30" id="summary-adic-status">
+                                    まだ計算されていません
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-[9px] text-slate-500 leading-relaxed pl-1 border-l-2 border-slate-700">
+                            ※ 「真の値」はデモ用の参照値(Math.*)。本番では有限精度の有理演算と外部監査に置き換わる。
+                        </p>
+                        <!-- KPI Line -->
+                        <p id="kpi-line" class="mt-3 text-[10px] font-bold text-cyan-300 bg-cyan-950/40 p-2.5 rounded-lg border border-cyan-900/50 flex items-start gap-2">
+                            <span class="mt-0.5">ℹ️</span>
+                            <span>まだ KPI を評価できるだけのデータがありません。</span>
+                        </p>
+                    </div>
+
+                    <!-- Patch: Structural Risk Warning Bar -->
+                    <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-3 mb-1 flex items-start gap-3 mt-4">
+                        <div class="text-red-400 mt-0.5">⚠️</div>
+                        <p class="text-[10px] sm:text-xs text-red-200/90 leading-relaxed">
+                            ADIC未通過の計算は、バグや改ざんが「ただの誤差」として通過する。<br class="hidden sm:inline">その脆弱性を比較検証する。
+                        </p>
+                    </div>
+
                     <!-- Ledger Panel -->
                     <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col flex-1 border border-slate-200 ring-1 ring-slate-900/5">
-                        <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center flex-wrap gap-2">
                             <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
                                 <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                検証レジャー (証拠台帳)
+                                検証レジャー (Evidence)
                             </h3>
-                            <span id="ledger-status" class="text-[9px] sm:text-[10px] font-mono text-slate-400 bg-slate-100 px-2.5 py-1 rounded border border-slate-200 transition-colors duration-300">データなし</span>
+                            
+                            <!-- Download Buttons (Patch) -->
+                            <div class="flex items-center gap-1.5 ml-auto">
+                                <button type="button" onclick="copyLedger()" class="text-[10px] px-2 py-1.5 rounded-md border border-slate-300 text-slate-600 hover:bg-slate-100 hover:text-cyan-600 transition-colors flex items-center gap-1" title="Copy to Clipboard">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                    <span id="btn-copy-text">Copy</span>
+                                </button>
+                                <button type="button" onclick="downloadLedgerJSON()" class="px-2 py-1.5 rounded-md border border-slate-500 text-[10px] text-slate-100 bg-slate-900/80 hover:bg-slate-800 transition-colors">
+                                    JSON
+                                </button>
+                                <button type="button" onclick="downloadLedgerCSV()" class="px-2 py-1.5 rounded-md border border-slate-500 text-[10px] text-slate-100 bg-slate-900/80 hover:bg-slate-800 transition-colors">
+                                    CSV
+                                </button>
+                            </div>
                         </div>
-
+                        
                         <!-- Hint Block -->
-                        <div id="ledger-hint" class="bg-amber-50 px-5 py-4 border-b border-amber-100 flex gap-4 transition-all duration-500 items-start">
+                        <div id="ledger-hint" class="bg-amber-50 px-5 py-4 border-b border-amber-100 flex gap-3 transition-all duration-500 items-start">
                             <div class="flex-shrink-0 mt-0.5">
-                                <div class="w-5 h-5 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold text-xs border border-amber-200">i</div>
+                                <div class="w-4 h-4 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold text-[10px] border border-amber-200">i</div>
                             </div>
                             <div class="text-xs sm:text-sm text-slate-700 leading-relaxed">
                                 <p class="mb-1 font-bold text-slate-800">検証レジャーとは</p>
                                 <p class="mb-1">計算の「すべての途中経過」を数学的証明として記録したログです。</p>
-                                <p class="text-[10px] text-slate-500 lg:hidden opacity-80">
-                                    ※ 表は横にスクロールできます（左列固定）
+                                <p class="text-[10px] text-slate-500 lg:hidden opacity-80 mt-1">
+                                    ※ 表は横にスクロールできます
                                 </p>
                             </div>
                         </div>
 
-                        <div class="relative flex-1 min-h-[180px]">
-                            <!-- Scroll Shadow Hint for Mobile -->
+                        <!-- ★ Ledger Summary -->
+                        <div id="ledger-summary" class="px-5 py-3 border-b border-slate-100 bg-white/60 backdrop-blur-sm">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] sm:text-xs">
+                                <div class="bg-slate-900/80 text-slate-100 rounded-xl px-3 py-2 border border-slate-700/60 flex flex-col justify-center">
+                                    <div class="text-slate-400 text-[9px] uppercase tracking-wide">Ledger 行数</div>
+                                    <div id="summary-rows" class="font-mono text-cyan-300 font-bold text-sm mt-0.5">–</div>
+                                </div>
+                                <div class="bg-slate-900/80 text-slate-100 rounded-xl px-3 py-2 border border-slate-700/60 flex flex-col justify-center">
+                                    <div class="text-slate-400 text-[9px] uppercase tracking-wide">最終区間幅</div>
+                                    <div id="summary-width" class="font-mono text-cyan-300 font-bold text-sm mt-0.5">–</div>
+                                </div>
+                                <div class="bg-slate-900/80 text-slate-100 rounded-xl px-3 py-2 border border-slate-700/60 flex flex-col justify-center">
+                                    <div class="text-slate-400 text-[9px] uppercase tracking-wide">検証時間</div>
+                                    <div id="summary-time" class="font-mono text-cyan-300 font-bold text-sm mt-0.5">–</div>
+                                </div>
+                                <div class="bg-slate-900/80 text-slate-100 rounded-xl px-3 py-2 border border-slate-700/60 flex flex-col justify-center">
+                                    <div class="text-slate-400 text-[9px] uppercase tracking-wide">モード</div>
+                                    <div id="summary-mode" class="font-mono text-cyan-300 font-bold text-sm mt-0.5">–</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative flex-1 min-h-[200px]">
                             <div class="absolute top-0 right-0 bottom-0 w-6 bg-gradient-to-l from-slate-900/5 to-transparent pointer-events-none lg:hidden z-10"></div>
-                            
-                            <div class="overflow-x-auto ledger-scroll bg-white h-full">
+                            <div class="overflow-x-auto ledger-scroll bg-white h-full pb-4">
                                 <table class="w-full text-xs sm:text-sm text-left whitespace-nowrap border-collapse">
                                     <thead class="text-[10px] sm:text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100 font-sans sticky top-0 backdrop-blur-sm z-30">
                                         <tr>
-                                            <th scope="col" class="px-4 py-3 sm:px-6 sm:py-4 font-semibold w-12 sticky-col bg-slate-50/95 backdrop-blur">No.</th>
-                                            <th scope="col" class="px-4 py-3 sm:px-6 sm:py-4 font-semibold">計算ステップ</th>
-                                            <th scope="col" class="px-4 py-3 sm:px-6 sm:py-4 font-semibold">値・区間</th>
-                                            <th scope="col" class="px-4 py-3 sm:px-6 sm:py-4 font-semibold text-center w-20">判定</th>
+                                            <th scope="col" class="px-4 py-3 font-semibold w-12 sticky-col bg-slate-50/95 backdrop-blur shadow-[1px_0_0_0_rgba(0,0,0,0.05)]">No.</th>
+                                            <th scope="col" class="px-4 py-3 font-semibold">Step</th>
+                                            <th scope="col" class="px-4 py-3 font-semibold">Interval / Value</th>
+                                            <th scope="col" class="px-4 py-3 font-semibold text-center w-20">Verdict</th>
                                         </tr>
                                     </thead>
                                     <tbody id="ledger-body" class="divide-y divide-slate-50">
-                                        <!-- Sample Data -->
-                                        <tr class="bg-white hover:bg-slate-50 transition-colors">
-                                            <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-400 sticky-col bg-white">01</td>
-                                            <td class="px-4 py-3 sm:px-6 sm:py-4 font-bold text-slate-700 text-xs">入力値 x</td>
-                                            <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-600">[2.000, 2.000]</td>
-                                            <td class="px-4 py-3 sm:px-6 sm:py-4 text-center"><span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100 text-green-600 text-[10px] font-bold">✓</span></td>
+                                        <!-- Rows injected here -->
+                                        <tr class="bg-white">
+                                            <td colspan="4" class="px-4 py-10 text-center text-slate-400 text-xs italic">
+                                                No ledger data. Run calculation to generate proofs.
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         
-                        <!-- Verdict -->
-                        <div id="final-verdict" class="hidden border-t border-slate-100 p-6 sm:p-8 text-center animate-fade-in-up">
-                            <!-- Injected -->
+                        <!-- Final Verdict -->
+                        <div id="final-verdict" class="hidden border-t border-slate-100 p-6 sm:p-8 text-center animate-fade-in-up bg-slate-50/50">
+                            <!-- Injected by JS -->
                         </div>
                     </div>
                 </div>
@@ -413,83 +567,28 @@
     </div>
 
     <!-- ==========================================
-         THEORY SECTION
+         FOOTER / LINKS
          ========================================== -->
-    <div class="bg-white relative">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+    <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 border-t border-slate-200 mt-10">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+            <a href="https://ghostdrifttheory.github.io/adic-core-JP/" target="_blank" class="group relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-slate-900 rounded-full hover:bg-slate-800 hover:ring-2 hover:ring-cyan-400 hover:ring-offset-2 hover:ring-offset-slate-50">
+                <span class="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
+                <span class="relative flex items-center gap-2">
+                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    背景数理 (Mathematical Foundation)
+                </span>
+            </a>
             
-            <div class="text-center mb-12 sm:mb-16">
-                <span class="text-cyan-600 font-bold tracking-widest text-[10px] sm:text-xs uppercase mb-3 block">Mathematical Foundation</span>
-                <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900 mb-6">数理的背景と存在定理</h2>
-                <div class="w-20 h-1.5 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto rounded-full mb-8"></div>
-                
-                <p class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto font-serif text-justify sm:text-center">
-                    ADICは、エネルギー制御、金融リスクモデル、暗号理論など、
-                    <span class="bg-cyan-50 px-1 border-b border-cyan-200 text-cyan-900 inline-block font-bold">「計算誤差が許されない領域」</span>
-                    のための基盤OSとして設計されています。
-                </p>
-            </div>
-
-            <article class="prose prose-slate prose-sm sm:prose-lg max-w-none prose-academic">
-                
-                <!-- Abstract -->
-                <div class="bg-slate-50 p-6 sm:p-8 rounded-xl border border-slate-200 mb-10 sm:mb-12 shadow-sm">
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Abstract</h4>
-                    <p class="text-xs sm:text-sm leading-6 sm:leading-7 text-slate-700 font-serif m-0 text-justify">
-                        本稿では、ADIC (Analytically Derived Interval Computation) システムの数学的基礎を確立する。
-                        具体的には、ある自然なクラスの実数値計算プログラムに対し、その解析的性質が、一階算術における $\Sigma_1$ 述語の真偽と論理的に同値になることを証明する。
-                    </p>
-                </div>
-
-                <h3 class="text-lg sm:text-xl font-bold mt-10 mb-5 text-slate-800 border-b border-slate-100 pb-2">1. 序論：検証の算術化</h3>
-                <p class="font-serif text-slate-700 leading-7 text-sm sm:text-base text-justify">
-                    実数値計算の正当性保証は、計算可能解析 (computable analysis) における中心的な課題である。
-                    本稿は、Weihrauch らの Type-2 理論や Bishop–Bridges の構成的解析を基礎とし、
-                    実数計算の検証プロセスを形式算術における $\Sigma_1$ 文へ還元する。
-                </p>
-
-                <!-- Theorem Box -->
-                <div class="relative bg-white border-l-4 border-cyan-500 p-5 sm:p-8 my-8 sm:my-10 shadow-lg shadow-slate-200/50 rounded-r-lg">
-                    <span class="block font-bold text-slate-900 mb-3 text-sm sm:text-base font-sans">定理 1.1 (主定理)</span>
-                    <div class="italic text-slate-700 font-serif text-sm sm:text-base overflow-x-auto">
-                        基本関数族 $\mathcal{O}$ が標準的な計算可能解析の仮定を満たすとき、
-                        $$ M(P,x) \iff \exists L \in \N \;.\; \Verify(P,x,L) = 1 $$
-                        の同値性が一階算術の枠内で成立する。
-                    </div>
-                </div>
-            </article>
-
-            <!-- Link Button Area -->
-            <div class="mt-16 sm:mt-20 pt-10 border-t border-slate-100 text-center">
-                <p class="text-slate-500 text-sm mb-6 font-serif">より詳細な数学的証明と技術仕様については、以下のドキュメントをご参照ください。</p>
-                
-                <a href="https://ghostdrifttheory.github.io/adic-core-JP/" target="_blank" class="group relative inline-flex items-center justify-center overflow-hidden rounded-full p-[2px] focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-50">
-                    <span class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 group-hover:animate-spin-slow"></span>
-                    <span class="relative inline-flex h-full w-full items-center justify-center rounded-full bg-white px-8 py-3 text-sm sm:text-base font-bold text-slate-700 transition-all group-hover:bg-transparent group-hover:text-white group-hover:shadow-lg">
-                        <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                        数学的な詳しい解説はこちら
-                        <svg class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </span>
-                </a>
-
-                <!-- Home Link Button -->
-                <div class="mt-10">
-                     <a href="https://ghostdrifttheory.github.io/ghostdrifttheory.github.io-JP/" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-200 bg-white text-xs sm:text-sm font-medium text-slate-500 hover:text-cyan-600 hover:border-cyan-200 hover:shadow-md transition-all duration-300">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                        GhostDrift Theory Home
-                     </a>
-                </div>
-
-                <div class="mt-12">
-                    <p class="text-[10px] text-slate-400 mb-1">
-                        Technical Note Series: Vol.2025-ADIC
-                    </p>
-                    <p class="text-xs text-slate-500 font-serif">
-                        © GhostDrift Mathematical Institute
-                    </p>
-                </div>
-            </div>
+            <a href="https://ghostdrifttheory.github.io/ghostdrifttheory.github.io-JP/" target="_blank" class="inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-slate-500 transition-all duration-300 bg-white border border-slate-200 rounded-full hover:text-cyan-600 hover:border-cyan-200 hover:shadow-md">
+                <span class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    GhostDrift Home
+                </span>
+            </a>
         </div>
+        <p class="text-center text-[10px] text-slate-400 mt-8 font-serif">
+            © GhostDrift Mathematical Institute
+        </p>
     </div>
 
     <!-- ==========================================
@@ -499,7 +598,622 @@
         // --- ADIC Core Logic ---
         let currentMode = 'adic'; 
         let hasBug = false;
+        
+        // State
+        let lastRun = null;        
+        let currentSteps = [];     
+        let lastNormal = null;     
+        let lastADIC = null;       
+        let currentScenario = 'plain';
 
+        // --- Patch: Basic Interval Arithmetic Implementation ---
+        const IntervalMath = {
+            add: (a, b) => [a[0] + b[0], a[1] + b[1]],
+            sub: (a, b) => [a[0] - b[1], a[1] - b[0]],
+            mul: (a, b) => {
+                const p1 = a[0] * b[0]; const p2 = a[0] * b[1];
+                const p3 = a[1] * b[0]; const p4 = a[1] * b[1];
+                return [Math.min(p1, p2, p3, p4), Math.max(p1, p2, p3, p4)];
+            },
+            // For demo: First-order approximation w_out = w_in * |f'(x)|
+            // log(x) -> deriv 1/x. width = w_in * (1/x)
+            log: (i) => {
+                const c = (i[0] + i[1]) / 2;
+                const w_in = i[1] - i[0];
+                const w_out = w_in * (1.0 / c); 
+                const mid = Math.log(c);
+                return [mid - w_out/2, mid + w_out/2];
+            },
+            sqrt: (i) => {
+                const c = (i[0] + i[1]) / 2;
+                const w_in = i[1] - i[0];
+                const w_out = w_in * (0.5 / Math.sqrt(c));
+                const mid = Math.sqrt(c);
+                return [mid - w_out/2, mid + w_out/2];
+            },
+            sin: (i) => {
+                const c = (i[0] + i[1]) / 2;
+                const w_in = i[1] - i[0];
+                const w_out = w_in * Math.abs(Math.cos(c)); // deriv of sin is cos
+                const mid = Math.sin(c);
+                return [mid - w_out/2, mid + w_out/2];
+            }
+        };
+
+        const SCENARIOS = {
+            plain: { 
+                func: 'log', x: 2.0, epsilon: 3, 
+                desc: "基本実験：log(2) を通じ、ADICによる全ステップ監査の挙動を検証する。",
+                bugDesc: "CPU計算ミス・ビット反転を再現"
+            },
+            energy: { 
+                func: 'sin', x: 1.57, epsilon: 4, 
+                desc: "【Energy】電力需給調整。位相計算へのノイズ混入を想定。",
+                bugDesc: "センサー入力ノイズによるビット反転"
+            },
+            security: { 
+                func: 'sqrt', x: 9.0, epsilon: 2, 
+                desc: "【Security】異常検知しきい値算出。メモリ破壊攻撃を想定。",
+                bugDesc: "メモリ破壊攻撃による値の改ざん"
+            },
+            legal: { 
+                func: 'complex_adv', x: 5.0, epsilon: 5, 
+                desc: "【Legal】金利・手数料計算。丸め誤差に見せかけた不正を想定。",
+                bugDesc: "丸め誤差の蓄積による不正な利益"
+            }
+        };
+
+        function trueFunctionValue(type, x) {
+            if (type === 'log') return Math.log(x);
+            if (type === 'sqrt') return Math.sqrt(x);
+            if (type === 'sin') return Math.sin(x);
+            if (type === 'complex_adv') return Math.sin(Math.log(x*x + 1));
+            return NaN;
+        }
+
+        // --- Export Logic ---
+        function exportLedgerRows(steps, mode) {
+            if (!Array.isArray(steps)) return [];
+            return steps.map((s, idx) => {
+                const row = {
+                    index: idx + 1,
+                    mode: mode,
+                    name: s.name || "",
+                    value: 'val' in s ? s.val : null,
+                    interval_lo: (s.interval && s.interval.length === 2) ? s.interval[0] : null,
+                    interval_hi: (s.interval && s.interval.length === 2) ? s.interval[1] : null,
+                    check: 'check' in s ? (s.check ? 'VALID' : 'INVALID') : null
+                };
+                return row;
+            });
+        }
+
+        function buildExportPayload() {
+            if (!lastRun || !Array.isArray(currentSteps)) return null;
+            const modeLabel = (lastRun.mode === 'normal') ? 'NORMAL' : 'ADIC';
+            return {
+                timestamp: new Date().toISOString(),
+                scenario: currentScenario,
+                mode: modeLabel,
+                func_type: lastRun.funcType,
+                x: lastRun.x,
+                epsilon: lastRun.epsilon,
+                bug: lastRun.bug,
+                ledger_rows: exportLedgerRows(currentSteps, modeLabel)
+            };
+        }
+
+        function downloadTextAsFile(text, filename, mime) {
+            const blob = new Blob([text], { type: mime || 'text/plain' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadLedgerJSON() {
+            const payload = buildExportPayload();
+            if (!payload) return;
+            downloadTextAsFile(JSON.stringify(payload, null, 2), 'adic_ledger.json', 'application/json');
+        }
+
+        function downloadLedgerCSV() {
+            if (!Array.isArray(currentSteps) || !lastRun) return;
+            const modeLabel = (lastRun.mode === 'normal') ? 'NORMAL' : 'ADIC';
+            const rows = exportLedgerRows(currentSteps, modeLabel);
+            const headers = ['index','mode','name','value','interval_lo','interval_hi','check'];
+            const lines = [headers.join(',')];
+            rows.forEach(r => {
+                const vals = headers.map(h => r[h] === null ? '' : String(r[h]));
+                lines.push(vals.join(','));
+            });
+            downloadTextAsFile(lines.join('\n'), 'adic_ledger.csv', 'text/csv');
+        }
+
+        function updateKPI() {
+            const el = document.getElementById('kpi-line');
+            if (!el) return;
+            if (!lastNormal || !lastADIC) {
+                el.innerHTML = '<span class="mt-0.5">ℹ️</span><span>まだ KPI を評価できるだけのデータがありません。</span>';
+                return;
+            }
+
+            // Real impact calculation logic
+            // Use the absolute error or the difference between corrupted value and true interval
+            const errAbs = lastNormal.errorAbs;
+            // Scale factors for "Impact"
+            const SCALE_MW = 1000000000; // Multiplier to make small float errors look huge in "MW" terms if unmanaged
+            // Actually, let's use the error relative to the epsilon to show "how many sigmas" it is off
+            
+            let text = '';
+            if (currentScenario === 'energy') {
+                // E.g. sin(x) error 0.0001 -> multiplied by Grid Capacity
+                const mwLoss = (errAbs * 5000).toFixed(2); 
+                text = `KPI: 系統負荷誤差 ${mwLoss} MW相当。このズレは予備力（LFC）を食いつぶし、大規模停電のトリガーになり得ます。`;
+            } else if (currentScenario === 'security') {
+                // E.g. sqrt error
+                const scoreDiff = (errAbs * 100).toFixed(4);
+                text = `KPI: 異常検知スコア乖離 ${scoreDiff}%。攻撃パケットがしきい値を ${scoreDiff}% 下回り、検知をすり抜けています。`;
+            } else if (currentScenario === 'legal') {
+                // E.g. compound interest error
+                const cash = (errAbs * 100000000).toFixed(0); // 100 million base
+                text = `KPI: 1億円の契約で ${cash}円 の不正利益。これが全顧客口座（100万件）で発生すると、被害総額は億単位になります。`;
+            } else {
+                text = `KPI: 参照値との差 ${errAbs.toExponential(2)}。単なる誤差に見えますが、攻撃者はこの隙間を使ってシステムの整合性を破壊します。`;
+            }
+            el.innerHTML = `<span class="mt-0.5 select-none">📊</span><span>${text}</span>`;
+        }
+
+        function updateWorldlineSummary() {
+            const nValEl    = document.getElementById('summary-normal-value');
+            const nErrEl    = document.getElementById('summary-normal-error');
+            const nStatusEl = document.getElementById('summary-normal-status');
+            const aIntEl    = document.getElementById('summary-adic-interval');
+            const aWidthEl  = document.getElementById('summary-adic-width');
+            const aStatusEl = document.getElementById('summary-adic-status');
+
+            if (!nValEl) return;
+
+            if (lastNormal) {
+                nValEl.textContent = lastNormal.value.toFixed(6);
+                nErrEl.textContent = `±${lastNormal.errorAbs.toExponential(2)}`;
+                nStatusEl.textContent = lastNormal.bug ? "攻撃成功：値が改ざんされました" : "バグなし：通常計算";
+                nStatusEl.className = lastNormal.bug 
+                    ? "mt-2 text-[9px] text-red-300 bg-red-900/40 p-2 rounded border border-red-800/50 font-bold"
+                    : "mt-2 text-[9px] text-slate-400 bg-slate-900/50 p-2 rounded";
+            } else {
+                nValEl.textContent = '–'; nErrEl.textContent = '–';
+                nStatusEl.textContent = '未計算';
+            }
+
+            if (lastADIC) {
+                const a = lastADIC.interval[0]; const b = lastADIC.interval[1];
+                aIntEl.textContent   = `[${a.toFixed(6)}, ${b.toFixed(6)}]`;
+                aWidthEl.textContent = lastADIC.width.toExponential(2);
+                aStatusEl.textContent = lastADIC.verified ? "整合性証明済み" : "不整合検知・遮断";
+                aStatusEl.className = lastADIC.verified
+                    ? "mt-2 text-[9px] text-cyan-100/70 bg-cyan-950/30 p-2 rounded border border-cyan-900/30"
+                    : "mt-2 text-[9px] text-red-200 bg-red-900/40 p-2 rounded border border-red-800/50 font-bold";
+            } else {
+                aIntEl.textContent = '–'; aWidthEl.textContent = '–';
+                aStatusEl.textContent = '未計算';
+            }
+            updateKPI();
+        }
+
+        function updateLedgerSummary(steps, modeLabel, elapsedMs) {
+            const rowsEl = document.getElementById('summary-rows');
+            if(!rowsEl) return;
+            rowsEl.textContent = steps ? steps.length : '-';
+            
+            const timeEl = document.getElementById('summary-time');
+            timeEl.textContent = elapsedMs + ' ms';
+
+            const modeEl = document.getElementById('summary-mode');
+            modeEl.textContent = modeLabel;
+
+            const widthEl = document.getElementById('summary-width');
+            let wText = '-';
+            if (modeLabel === 'ADIC' && steps.length > 0) {
+                const last = steps[steps.length-1];
+                if (last.interval) {
+                    const w = last.interval[1] - last.interval[0];
+                    const digits = w > 0 ? Math.floor(-Math.log10(w)) : 0;
+                    wText = `${w.toExponential(1)} (≒${digits}桁)`;
+                }
+            }
+            widthEl.textContent = wText;
+        }
+
+        function onBugChange(checked) { hasBug = checked; }
+
+        function applyScenario() {
+            const select = document.getElementById('scenario-select');
+            const key = select ? select.value : 'plain';
+            
+            currentScenario = key; // Update current scenario
+
+            const config = SCENARIOS[key];
+            if(!config) return;
+
+            // Apply values
+            document.getElementById('func-select').value = config.func;
+            document.getElementById('input-x-val').value = config.x;
+            document.getElementById('input-x-slider').value = config.x;
+            document.getElementById('epsilon-slider').value = config.epsilon;
+            document.getElementById('epsilon-display').innerText = Math.pow(10, -config.epsilon);
+            document.getElementById('scenario-desc').innerText = config.desc;
+
+            // バグ説明もシナリオに合わせて更新
+            const bugDescEl = document.getElementById('bug-desc');
+            if (bugDescEl && config.bugDesc) {
+                bugDescEl.innerText = config.bugDesc;
+            }
+
+            // Reset bug state
+            hasBug = false;
+            document.getElementById('bug-switch').checked = false;
+        }
+
+        // --- Updated Logic Engine (Interval Arithmetic) ---
+        function computeNormal(type, x, bug) {
+            let steps = [{ name: "Input x", val: x }];
+            let res = 0;
+            
+            // "Structural Attack" logic: subtler but damaging
+            if (type === 'log') {
+                res = Math.log(x);
+                if(bug) res = res + 0.02; // Small shift
+                steps.push({ name: "ln(x)", val: res });
+            } else if (type === 'sqrt') {
+                res = Math.sqrt(x);
+                if(bug) res = res * 0.98; // 2% reduction (clipping)
+                steps.push({ name: "sqrt(x)", val: res });
+            } else if (type === 'sin') {
+                res = Math.sin(x);
+                if(bug) res = res + 0.1; // Phase drift
+                steps.push({ name: "sin(x)", val: res });
+            } else if (type === 'complex_adv') {
+                let s1 = x*x; steps.push({name: "x^2", val: s1});
+                let s2 = s1 + 1; steps.push({name: "+1", val: s2});
+                let s3 = Math.log(s2);
+                if(bug) s3 = s3 * 1.005; // Salami slicing in intermediate step
+                steps.push({name: "ln", val: s3});
+                let s4 = Math.sin(s3);
+                steps.push({name: "sin", val: s4});
+                res = s4;
+            }
+            return { steps: steps };
+        }
+
+        // --- ADIC kernel module (UI から切り離した実行エンジン) ---
+        const ADIC_KERNEL = {
+            /**
+             * type: 'log' | 'sqrt' | 'sin' | 'complex_adv'
+             * x: 実数入力
+             * epsExponent: スライダの値 N（幅は 10^{-N}）
+             * bug: hasBug フラグ
+             */
+            run(type, x, epsExponent, bug) {
+                const epsWidth = Math.pow(10, -epsExponent);
+
+                const t0 = performance.now();
+                const normal = computeNormal(type, x, bug);
+                const adic   = computeADIC(type, x, epsExponent, bug);
+                const elapsedMs = Math.round((performance.now() - t0) * 10) / 10;
+
+                const normalSteps = normal.steps || [];
+                const adicSteps   = adic.steps   || [];
+
+                const normalLast = normalSteps[normalSteps.length - 1] || { val: NaN };
+                const adicLast   = adicSteps[adicSteps.length - 1]     || { interval: [NaN, NaN] };
+
+                const trueVal = trueFunctionValue(type, x);
+                const val     = normalLast.val;
+                const errAbs  =
+                    (typeof val === 'number' && typeof trueVal === 'number')
+                        ? Math.abs(val - trueVal)
+                        : NaN;
+
+                const interval = (adicLast.interval && adicLast.interval.length === 2)
+                    ? adicLast.interval
+                    : [NaN, NaN];
+                const width = interval[1] - interval[0];
+
+                return {
+                    normal: {
+                        steps: normalSteps,
+                        value: val,
+                        trueValue: trueVal,
+                        errorAbs: errAbs,
+                        bug
+                    },
+                    adic: {
+                        steps: adicSteps,
+                        interval,
+                        width,
+                        verified: !!adic.verified
+                    },
+                    meta: {
+                        elapsedMs,
+                        epsExponent,
+                        epsWidth
+                    }
+                };
+            }
+        };
+
+        // --- ADIC kernel implementation ---
+        function computeADIC(type, x, eps, bug) {
+            // eps には「スライダの値 N（指数）」が入る想定
+            // 実際の幅は 10^{-N} に変換して使う
+            const w0 = Math.pow(10, -eps);
+            let iX = [x - w0, x + w0];
+            let steps = [{ name: "Input x", interval: iX, check: true }];
+            let verified = true;
+
+            if (type === 'log') {
+                let iRes = IntervalMath.log(iX);
+                // Attack simulation: The "calculated" value drifts, but ADIC interval assumes correct logic
+                // If bug is ON, we simulate that the *value* check fails against the interval
+                let val = Math.log(x);
+                if (bug) val = val + 0.02; // Same attack as Normal
+                // Check: is corrupted value in interval?
+                let ok = (val >= iRes[0] && val <= iRes[1]);
+                steps.push({ name: "ln(x)", interval: iRes, check: ok });
+                if(!ok) verified = false;
+
+            } else if (type === 'sqrt') {
+                let iRes = IntervalMath.sqrt(iX);
+                let val = Math.sqrt(x);
+                if (bug) val = val * 0.98;
+                let ok = (val >= iRes[0] && val <= iRes[1]);
+                steps.push({ name: "sqrt(x)", interval: iRes, check: ok });
+                if(!ok) verified = false;
+
+            } else if (type === 'sin') {
+                let iRes = IntervalMath.sin(iX);
+                let val = Math.sin(x);
+                if (bug) val = val + 0.1;
+                let ok = (val >= iRes[0] && val <= iRes[1]);
+                steps.push({ name: "sin(x)", interval: iRes, check: ok });
+                if(!ok) verified = false;
+
+            } else if (type === 'complex_adv') {
+                // x^2
+                let mid1 = x*x;
+                // Approx interval: w_new = w_old * |2x|
+                let w1 = (iX[1]-iX[0]) * Math.abs(2*x);
+                let i1 = [mid1 - w1/2, mid1 + w1/2];
+                steps.push({name: "x^2", interval: i1, check: true});
+
+                // +1
+                let i2 = [i1[0]+1, i1[1]+1];
+                steps.push({name: "+1", interval: i2, check: true});
+
+                // ln
+                let mid2 = i2[0] + (i2[1]-i2[0])/2;
+                let w2 = (i2[1]-i2[0]) * (1.0/mid2);
+                let mid3 = Math.log(mid2);
+                let i3 = [mid3 - w2/2, mid3 + w2/2];
+                
+                // Bug check at ln step
+                let val3 = Math.log(x*x + 1);
+                if(bug) val3 = val3 * 1.005; // Attack!
+                let ok3 = (val3 >= i3[0] && val3 <= i3[1]);
+                steps.push({name: "ln", interval: i3, check: ok3});
+                if(!ok3) verified = false;
+
+                // sin
+                let w3 = (i3[1]-i3[0]) * Math.abs(Math.cos(mid3));
+                let mid4 = Math.sin(mid3);
+                let i4 = [mid4 - w3/2, mid4 + w3/2];
+                
+                let val4 = Math.sin(val3); // Propagated attack
+                let ok4 = (val4 >= i4[0] && val4 <= i4[1]);
+                steps.push({name: "sin", interval: i4, check: ok4});
+                if(!ok4) verified = false;
+            }
+
+            return { steps: steps, verified: verified };
+        }
+
+        // --- Ledger 描画（UI 専用） ---
+        function renderLedgerTable(steps, modeLabel) {
+            const tbody = document.getElementById('ledger-body');
+            const hint  = document.getElementById('ledger-hint');
+            if (!tbody) return;
+
+            if (!Array.isArray(steps) || steps.length === 0) {
+                tbody.innerHTML = `
+                    <tr class="bg-white">
+                        <td colspan="4" class="px-4 py-10 text-center text-slate-400 text-xs italic">
+                            No ledger data. Run calculation to generate proofs.
+                        </td>
+                    </tr>`;
+                if (hint) hint.classList.remove('hidden');
+                return;
+            }
+
+            if (hint) hint.classList.add('hidden');
+
+            const rowsHtml = steps.map((s, idx) => {
+                const no   = idx + 1;
+                const name = s.name || '';
+
+                let valueText = '–';
+                if (s.interval && s.interval.length === 2) {
+                    valueText = `[${s.interval[0].toFixed(6)}, ${s.interval[1].toFixed(6)}]`;
+                } else if ('val' in s && typeof s.val === 'number') {
+                    valueText = s.val.toFixed(6);
+                }
+
+                let verdictText  = '–';
+                let verdictClass = 'text-[10px] px-2 py-1 rounded border border-slate-200 bg-slate-50 text-slate-500';
+                if ('check' in s) {
+                    if (s.check) {
+                        verdictText  = 'VALID';
+                        verdictClass = 'text-[10px] px-2 py-1 rounded border border-emerald-200 bg-emerald-50 text-emerald-700 font-semibold';
+                    } else {
+                        verdictText  = 'INVALID';
+                        verdictClass = 'text-[10px] px-2 py-1 rounded border border-red-300 bg-red-50 text-red-700 font-semibold';
+                    }
+                }
+
+                return `
+                    <tr class="bg-white hover:bg-slate-50/80 transition-colors">
+                        <td class="px-4 py-2 text-xs text-slate-500 text-right">${no}</td>
+                        <td class="px-4 py-2 text-xs sm:text-sm font-mono text-slate-800">${name}</td>
+                        <td class="px-4 py-2 text-[11px] sm:text-xs font-mono text-slate-700">${valueText}</td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="${verdictClass}">${verdictText}</span>
+                        </td>
+                    </tr>`;
+            }).join('');
+
+            tbody.innerHTML = rowsHtml;
+        }
+
+        function renderFinalVerdict() {
+            const box = document.getElementById('final-verdict');
+            if (!box) return;
+
+            if (!lastADIC) {
+                box.classList.add('hidden');
+                box.innerHTML = '';
+                return;
+            }
+
+            box.classList.remove('hidden');
+
+            const scenarioLabelMap = {
+                plain:  '基礎ケース',
+                energy: 'Energy / 電力制御',
+                security: 'Security / 攻撃検知',
+                legal:  'Legal / 金利・手数料'
+            };
+            const label = scenarioLabelMap[currentScenario] || '';
+
+            if (lastADIC.verified) {
+                box.innerHTML = `
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-3">
+                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-1">検証成功 (Verification Successful)</h4>
+                    <p class="text-xs text-slate-500 mb-4">
+                        数学的整合性を証明。攻撃による値の破壊はLedgerが記録し、即座に遮断される。<br>
+                    </p>
+                    <a href="#" class="text-[10px] sm:text-xs text-slate-400 hover:text-cyan-600 transition-colors border-b border-dotted border-slate-400 hover:border-cyan-600 pb-0.5">
+                        GhostDrift Lab: ドメイン別実装デモ
+                    </a>
+                `;
+            } else {
+                box.innerHTML = `
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-3 animate-bounce">
+                        <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-red-600 mb-1">検証失敗 - 遮断</h4>
+                    <p class="text-xs text-slate-600 mb-4">
+                        攻撃またはバグによる破壊を検知。ADICが本番反映前に世界線を遮断した。
+                    </p>
+                    <button onclick="replayOpposite()" class="px-4 py-2 bg-red-50 text-red-600 text-xs font-bold rounded-lg border border-red-200 hover:bg-red-100 transition-colors">
+                        比較リプレイ
+                    </button>
+                `;
+            }
+        }
+
+        // --- Core Execution entrypoint (NORMAL / ADIC 共通) ---
+        function runCalculation() {
+            const funcSelect = document.getElementById('func-select');
+            const xInput     = document.getElementById('input-x-val');
+            const epsSlider  = document.getElementById('epsilon-slider');
+            const statusBadge = document.getElementById('status-badge');
+            const vizContainer = document.getElementById('viz-container');
+            const compareBtn = document.getElementById('btn-compare');
+
+            if (!funcSelect || !xInput || !epsSlider) return;
+
+            const type    = funcSelect.value;
+            const x       = parseFloat(xInput.value);
+            const epsExp  = parseInt(epsSlider.value, 10);
+
+            if (!Number.isFinite(x)) {
+                alert('x の入力が数値として解釈できません。');
+                return;
+            }
+
+            // UI: Loading State 設定 (一瞬だが念のため)
+            if(statusBadge) {
+                statusBadge.innerText = "RUNNING"; 
+                statusBadge.className="px-2.5 py-1 rounded-md text-[9px] sm:text-[10px] font-mono font-bold bg-yellow-500/20 text-yellow-500 border border-yellow-500/20";
+            }
+            // vizContainerのクリアなどは残してもいいが、即座に上書きされる。
+
+            if(compareBtn) compareBtn.disabled = true;
+
+            // 即時実行（疑似ディレイを撤去して体感を軽くする）
+            const result = ADIC_KERNEL.run(type, x, epsExp, hasBug);
+
+            // worldline 用の集約値
+            lastNormal = {
+                value:    result.normal.value,
+                trueValue: result.normal.trueValue,
+                errorAbs: result.normal.errorAbs,
+                bug:      result.normal.bug
+            };
+            lastADIC = {
+                interval: result.adic.interval,
+                width:    result.adic.width,
+                verified: result.adic.verified
+            };
+
+            // Ledger / Export 用メタデータ
+            lastRun = {
+                mode:     currentMode,
+                funcType: type,
+                x:        x,
+                epsilon:  epsExp, // ここは「指数 N」を保存
+                bug:      hasBug
+            };
+
+            // どちらの Ledger を前面に出すかは mode で切り替え
+            currentSteps = (currentMode === 'normal')
+                ? result.normal.steps
+                : result.adic.steps;
+
+            const modeLabel = currentMode === 'normal' ? 'NORMAL' : 'ADIC';
+
+            // Update UI Components
+            if (currentMode === 'normal') {
+                renderVizNormal(currentSteps, vizContainer);
+                if(statusBadge) {
+                    statusBadge.innerText = "FINISHED"; 
+                    statusBadge.className="px-2.5 py-1 rounded-md text-[9px] sm:text-[10px] font-mono font-bold bg-slate-700 text-slate-300 border border-slate-600";
+                }
+            } else {
+                renderVizADIC(currentSteps, vizContainer);
+                if(statusBadge) {
+                    statusBadge.innerText = result.adic.verified ? "VERIFIED" : "FAILED";
+                    statusBadge.className = result.adic.verified 
+                        ? "px-2.5 py-1 rounded-md text-[9px] sm:text-[10px] font-mono font-bold bg-green-500/10 text-green-500 border border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.3)]"
+                        : "px-2.5 py-1 rounded-md text-[9px] sm:text-[10px] font-mono font-bold bg-red-500/10 text-red-500 border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]";
+                }
+            }
+
+            renderLedgerTable(currentSteps, modeLabel);
+            updateLedgerSummary(currentSteps, modeLabel, result.meta.elapsedMs);
+            updateWorldlineSummary();
+            renderFinalVerdict();
+
+            if(compareBtn) compareBtn.disabled = false;
+        }
+
+        // --- Core Execution ---
         function setMode(mode) {
             currentMode = mode;
             const normalBtn = document.getElementById('mode-normal');
@@ -508,240 +1222,111 @@
             const precCtrl = document.getElementById('precision-control');
 
             if (mode === 'normal') {
-                normalBtn.className = "flex-1 py-3 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 bg-white text-slate-900 shadow-lg ring-1 ring-white/20 hover:bg-slate-50";
-                adicBtn.className = "flex-1 py-3 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
-                desc.innerHTML = "<span class='text-white font-bold'>標準モード:</span> 高速ですが検証ログなし。結果はFPUの信頼性に依存します。";
-                
-                precCtrl.style.opacity = '0.4';
-                precCtrl.style.pointerEvents = 'none';
+                normalBtn.className = "w-full py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-between group bg-slate-100 text-slate-900 shadow-md ring-2 ring-slate-200";
+                adicBtn.className = "w-full py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-between opacity-50 hover:opacity-100 hover:bg-slate-800 text-slate-400";
+                desc.innerHTML = "誤差やバグを隠蔽する「普通の計算」。構造攻撃者にとって、これ以上の標的はない。";
+                precCtrl.style.opacity = '0.4'; precCtrl.style.pointerEvents = 'none';
             } else {
-                normalBtn.className = "flex-1 py-3 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
-                adicBtn.className = "flex-1 py-3 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 ring-1 ring-cyan-400/20";
-                desc.innerHTML = "<span class='text-cyan-400 font-bold'>ADICモード:</span> 全ステップで区間解析を行い、正しさを数学的に証明します。";
-                
-                precCtrl.style.opacity = '1';
-                precCtrl.style.pointerEvents = 'auto';
+                normalBtn.className = "w-full py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-between opacity-50 hover:opacity-100 hover:bg-slate-800 text-slate-400";
+                adicBtn.className = "w-full py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-between bg-gradient-to-r from-cyan-900 to-blue-900 text-white shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400/50";
+                desc.innerHTML = "全過程をLedgerで監査する「防御壁」。値が壊されれば即座に検知し、証拠とともに停止する。";
+                precCtrl.style.opacity = '1'; precCtrl.style.pointerEvents = 'auto';
             }
         }
 
-        // --- Mock Hash Generator for Effect ---
-        function generateProofHash() {
-            const chars = '0123456789abcdef';
-            let hash = '0x';
-            for (let i = 0; i < 40; i++) {
-                hash += chars[Math.floor(Math.random() * chars.length)];
+        // --- 比較リプレイボタン ---
+        function replayOpposite() {
+            if (!lastRun) return;
+
+            // 反対モードへ切り替え
+            const nextMode = lastRun.mode === 'normal' ? 'adic' : 'normal';
+            setMode(nextMode);
+
+            // 入力条件を復元
+            const funcSelect = document.getElementById('func-select');
+            const epsSlider  = document.getElementById('epsilon-slider');
+            const bugSwitch  = document.getElementById('bug-switch');
+            const xInput     = document.getElementById('input-x-val');
+            const xSlider    = document.getElementById('input-x-slider');
+
+            if (funcSelect) funcSelect.value = lastRun.funcType;
+            
+            // x の復元（スライダ・入力欄両方）
+            if (xInput)  xInput.value = lastRun.x;
+            if (xSlider) xSlider.value = lastRun.x;
+
+            if (epsSlider) {
+                epsSlider.value = lastRun.epsilon; // lastRun.epsilon には index (N) が入っている
+                epsSlider.dispatchEvent(new Event('input'));
             }
-            return hash;
+            if (bugSwitch) {
+                bugSwitch.checked = lastRun.bug;
+                onBugChange(lastRun.bug);
+            }
+
+            // 同じ入力で反対モードを実行
+            runCalculation();
         }
 
-        // --- Computation Engine ---
-        function runCalculation() {
-            try {
-                const funcType = document.getElementById('func-select').value;
-                const x = parseFloat(document.getElementById('input-x-val').value);
-                const sliderVal = parseInt(document.getElementById('epsilon-slider').value);
-                const epsilon = Math.pow(10, -(sliderVal));
-                hasBug = document.getElementById('bug-switch').checked;
+        // Init
+        setMode('adic');
+        applyScenario(); 
+        updateWorldlineSummary(); 
+        
+        // ε スライダ: exponent N -> 幅 10^{-N} を表示
+        const epsSlider   = document.getElementById('epsilon-slider');
+        const epsDisplay  = document.getElementById('epsilon-display');
+        if (epsSlider && epsDisplay) {
+            const syncEps = () => {
+                const exp   = parseInt(epsSlider.value, 10);
+                const width = Math.pow(10, -exp);
+                epsDisplay.textContent = width.toString(); // 例: 0.001
+            };
+            syncEps();
+            epsSlider.addEventListener('input', syncEps);
+        }
 
-                const viz = document.getElementById('viz-container');
-                const tbody = document.getElementById('ledger-body');
-                const statusBadge = document.getElementById('status-badge');
-                const ledgerStatus = document.getElementById('ledger-status');
-                const finalVerdict = document.getElementById('final-verdict');
-                const ledgerHint = document.getElementById('ledger-hint');
-
-                // Fade out hint
-                if (ledgerHint && !ledgerHint.classList.contains('hidden')) {
-                    ledgerHint.style.opacity = '0';
-                    ledgerHint.style.height = '0';
-                    ledgerHint.style.padding = '0';
-                    ledgerHint.style.border = 'none';
-                    setTimeout(() => ledgerHint.classList.add('hidden'), 500);
+        // x 入力とスライダの同期
+        const xSlider = document.getElementById('input-x-slider');
+        const xInput  = document.getElementById('input-x-val');
+        if (xSlider && xInput) {
+            xSlider.addEventListener('input', () => {
+                xInput.value = xSlider.value;
+            });
+            xInput.addEventListener('input', () => {
+                if (xInput.value === '') return;
+                const v = parseFloat(xInput.value);
+                if (!Number.isNaN(v)) {
+                    xSlider.value = xInput.value;
                 }
-
-                // Processing UI
-                viz.innerHTML = `
-                    <div class="flex flex-col items-center justify-center space-y-4 animate-pulse py-10 w-full">
-                        <div class="w-12 h-12 rounded-full border-4 border-t-cyan-500 border-r-transparent border-b-blue-500 border-l-transparent animate-spin"></div>
-                        <div class="text-[10px] font-mono text-cyan-400 tracking-widest flex gap-1">
-                            <span>解析中</span>
-                            <span class="animate-[pulse_1s_infinite]">.</span>
-                            <span class="animate-[pulse_1s_infinite_0.2s]">.</span>
-                            <span class="animate-[pulse_1s_infinite_0.4s]">.</span>
-                        </div>
-                    </div>
-                `;
-                statusBadge.innerText = "計算中..."; 
-                statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-yellow-500/20 text-yellow-500 border border-yellow-500/20";
-                ledgerStatus.innerText = "記録中...";
-                ledgerStatus.className = "text-[9px] sm:text-[10px] font-mono text-slate-400 bg-slate-100 px-2.5 py-1 rounded border border-slate-200 animate-pulse";
-                finalVerdict.className = "hidden";
-                tbody.innerHTML = ''; // Clear ledger immediately
-
-                // DELAY SIMULATION
-                const delay = currentMode === 'normal' ? 600 : 1500 + (sliderVal * 500);
-
-                setTimeout(() => {
-                    let resultObj;
-                    if (currentMode === 'normal') {
-                        resultObj = computeNormal(funcType, x, hasBug);
-                        renderVizNormal(resultObj.steps, viz);
-                        renderLedgerNormal(resultObj.steps, tbody);
-                        
-                        statusBadge.innerText = "完了"; statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-slate-700 text-slate-300 border border-slate-600";
-                        ledgerStatus.innerText = "未検証";
-                        ledgerStatus.className = "text-[9px] sm:text-[10px] font-mono text-slate-400 bg-slate-100 px-2.5 py-1 rounded border border-slate-200";
-                    } else {
-                        resultObj = computeADIC(funcType, x, epsilon, hasBug);
-                        renderVizADIC(resultObj.steps, viz);
-                        
-                        // Animated Ledger Entry
-                        animateLedgerEntries(resultObj.steps, tbody, () => {
-                            const isVerified = resultObj.verified;
-                            finalVerdict.className = "block p-6 sm:p-8 bg-slate-50 text-center animate-fade-in-up border-t border-slate-200";
-                            
-                            // Proof ID (Hash)
-                            const proofId = isVerified ? generateProofHash() : "INVALID_PROOF_SIGNATURE";
-
-                            if (isVerified) {
-                                statusBadge.innerText = "検証成功"; statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-green-500/10 text-green-500 border border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.3)]";
-                                ledgerStatus.innerText = "安全 (SECURE)"; ledgerStatus.className="text-[9px] sm:text-[10px] font-mono text-green-600 bg-green-50 px-2.5 py-1 rounded border border-green-200 font-bold";
-
-                                finalVerdict.innerHTML = `
-                                    <div class="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-green-100 mb-3 sm:mb-4">
-                                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    </div>
-                                    <h4 class="text-lg sm:text-xl font-bold text-slate-800 mb-1">検証成功 (Verification Successful)</h4>
-                                    <p class="text-xs sm:text-sm text-slate-500">
-                                        数学的な整合性が証明されました。<br>
-                                        <span class="font-mono text-[9px] sm:text-[10px] text-slate-400 mt-2 block break-all">Proof ID: ${proofId}</span>
-                                    </p>
-                                `;
-                            } else {
-                                statusBadge.innerText = "検証失敗"; statusBadge.className="px-2.5 py-1 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-red-500/10 text-red-500 border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]";
-                                ledgerStatus.innerText = "危険 (CORRUPT)"; ledgerStatus.className="text-[9px] sm:text-[10px] font-mono text-red-600 bg-red-50 px-2.5 py-1 rounded border border-red-200 font-bold";
-
-                                finalVerdict.innerHTML = `
-                                    <div class="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-red-100 mb-3 sm:mb-4 animate-bounce">
-                                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    </div>
-                                    <h4 class="text-lg sm:text-xl font-bold text-red-600 mb-1">検証失敗 (Verification Failed)</h4>
-                                    <p class="text-xs sm:text-sm text-slate-600">
-                                        許容誤差を超える致命的な不整合を検出しました。
-                                    </p>
-                                `;
-                            }
-                        });
-                    }
-                }, delay);
-            } catch (e) {
-                console.error(e);
-                alert("計算プロセスでエラーが発生しました。");
-            }
+            });
         }
 
-        // --- Slider & UI Helpers ---
-        document.getElementById('epsilon-slider').addEventListener('input', (e) => {
-            const val = parseInt(e.target.value);
-            const ep = Math.pow(10, -(val));
-            const disp = document.getElementById('epsilon-display');
-            disp.textContent = ep;
-            disp.className = `mono text-xs bg-slate-900 px-2 py-0.5 rounded border border-slate-700 ${val > 3 ? 'text-green-400 border-green-900/50' : 'text-cyan-300'}`;
-        });
-        document.getElementById('input-x-slider').addEventListener('input', (e) => document.getElementById('input-x-val').value = e.target.value);
-        document.getElementById('input-x-val').addEventListener('change', (e) => document.getElementById('input-x-slider').value = e.target.value);
-
-        // --- Logic & Rendering ---
-        function computeNormal(type, x, bug) {
-            let steps = [{ name: "入力値 x", val: x }];
-            let res = 0;
-            if (type === 'log') { res = Math.log(x); if(bug) res *= 1.25; steps.push({ name: "log(x)", val: res }); }
-            else if (type === 'sqrt') { res = Math.sqrt(x); if(bug) res -= 0.5; steps.push({ name: "sqrt(x)", val: res }); }
-            else if (type === 'sin') { res = Math.sin(x); if(bug) res = -res; steps.push({ name: "sin(x)", val: res }); }
-            else if (type === 'complex_adv') {
-                // sin(ln(x^2 + 1))
-                let s1 = x*x; steps.push({name: "x^2", val: s1});
-                let s2 = s1 + 1; steps.push({name: "+1", val: s2});
-                let s3 = Math.log(s2); if(bug) s3 += 2.0; steps.push({name: "ln", val: s3});
-                let s4 = Math.sin(s3); steps.push({name: "sin", val: s4});
-                res = s4;
-            }
-            return { steps: steps };
+        // Attach listener for replay button if it wasn't inline
+        const compareBtn = document.getElementById('btn-compare');
+        if (compareBtn) {
+            compareBtn.onclick = replayOpposite;
         }
 
-        function computeADIC(type, x, eps, bug) {
-            let width = eps * 1.0; let verified = true; let steps = [];
-            let iX = [x - width/10, x + width/10];
-            steps.push({ name: "入力値 x", interval: iX, check: true });
-
-            if (type === 'log') {
-                let t = Math.log(x); let c = bug ? t * 1.25 : t; let i = [c - width, c + width];
-                let ok = (t >= i[0] && t <= i[1]); steps.push({ name: "log(x)", interval: i, check: ok });
-                if(!ok) verified = false;
-            } else if (type === 'complex_adv') {
-                // sin(ln(x^2 + 1))
-                // Step 1: x^2
-                let t1 = x*x; 
-                let i1 = [t1-width, t1+width]; 
-                steps.push({name: "x^2", interval: i1, check: true}); 
-
-                // Step 2: +1
-                let t2 = t1 + 1;
-                let i2 = [i1[0]+1, i1[1]+1];
-                steps.push({name: "+1", interval: i2, check: true});
-
-                // Step 3: ln()
-                let t3 = Math.log(t2);
-                let c3 = bug ? t3 + 3.0 : t3; 
-                let i3 = [c3-width, c3+width];
-                let ok3 = (t3 >= i3[0] && t3 <= i3[1]);
-                steps.push({name: "ln", interval: i3, check: ok3});
-                if(!ok3) verified = false;
-
-                // Step 4: sin()
-                let c4 = Math.sin(c3); 
-                let i4 = [c4-width, c4+width];
-                // Verification against True Math Value
-                let trueVal = Math.sin(Math.log(x*x+1));
-                let ok4 = (trueVal >= i4[0] && trueVal <= i4[1]);
-                steps.push({name: "sin", interval: i4, check: ok4});
-                if(!ok4) verified = false;
-
-            } else {
-                let t = (type==='sin') ? Math.sin(x) : Math.sqrt(x); 
-                let c = t;
-                if(bug && type==='sin') c = -t; 
-                if(bug && type==='sqrt') c = t - 1.0; 
-                let i = [c - width, c + width];
-                let ok = (t >= i[0] && t <= i[1]);
-                steps.push({ name: type + "(x)", interval: i, check: ok });
-                if(!ok) verified = false;
-            }
-            return { steps: steps, verified: verified };
-        }
-
+        // --- Render Visualization Functions (Restored) ---
         function renderVizADIC(steps, container) {
+            if (!container) return;
             let html = '<div class="flex items-center gap-4 sm:gap-8 px-4 sm:px-0 animate-slide-in">';
             steps.forEach((step, idx) => {
                 const isLast = idx === steps.length - 1;
                 const color = step.check ? 'border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.25)]';
                 const bg = step.check ? 'bg-slate-800' : 'bg-red-900/20';
-                
-                // Safe access to interval
-                const lb = step.interval ? step.interval[0].toFixed(2) : "Err";
-                const ub = step.interval ? step.interval[1].toFixed(2) : "Err";
-
                 html += `
                     <div class="relative flex flex-col items-center group viz-arrow ${isLast ? 'viz-last' : ''}">
-                        <div class="w-24 h-24 sm:w-32 sm:h-32 ${bg} rounded-xl border-2 ${color} flex flex-col items-center justify-center p-2 shadow-lg transition-transform hover:scale-105">
-                            <span class="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-wider mb-1 sm:mb-2 font-bold truncate w-full text-center">${step.name}</span>
-                            <div class="w-full px-1 sm:px-2 mb-1 sm:mb-2">
-                                <div class="h-6 sm:h-8 bg-slate-900 rounded relative border border-slate-700/50 overflow-hidden">
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 ${bg} rounded-xl border-2 ${color} flex flex-col items-center justify-center p-2 shadow-lg transition-transform hover:scale-105">
+                            <span class="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-wider mb-1 font-bold truncate w-full text-center">${step.name}</span>
+                            <div class="w-full px-1 mb-1">
+                                <div class="h-6 bg-slate-900 rounded relative border border-slate-700/50 overflow-hidden">
                                     <div class="absolute top-0 bottom-0 ${step.check ? 'bg-cyan-500/30 border-x border-cyan-400' : 'bg-red-500/30 border-x border-red-400'}" style="left: 15%; right: 15%;"></div>
                                     <div class="absolute top-1/2 left-1/2 w-1 h-1 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
                                 </div>
                             </div>
-                            <span class="text-[8px] sm:text-[10px] font-mono text-cyan-100 font-bold tracking-tight">[${lb}, ${ub}]</span>
+                            <span class="text-[8px] sm:text-[9px] font-mono text-cyan-100 font-bold tracking-tight">[${step.interval[0].toFixed(2)}, ${step.interval[1].toFixed(2)}]</span>
                         </div>
                     </div>`;
             });
@@ -750,15 +1335,15 @@
         }
 
         function renderVizNormal(steps, container) {
+            if (!container) return;
             let html = '<div class="flex items-center gap-4 sm:gap-6 px-4 sm:px-0 animate-slide-in">';
             steps.forEach((step, idx) => {
                 const isLast = idx === steps.length - 1;
-                const val = (typeof step.val === 'number') ? step.val.toFixed(3) : "Err";
                 html += `
                     <div class="relative flex flex-col items-center group viz-arrow ${isLast ? 'viz-last' : ''}">
-                        <div class="w-20 h-20 sm:w-24 sm:h-24 bg-slate-800 rounded-xl border border-slate-600 flex flex-col items-center justify-center p-2 shadow-lg">
-                            <span class="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-wider mb-1">${step.name}</span>
-                            <span class="text-sm sm:text-lg font-mono font-bold text-white">${val}</span>
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 bg-slate-100 rounded-xl border border-slate-300 flex flex-col items-center justify-center p-2 shadow-lg">
+                            <span class="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-wider mb-1">${step.name}</span>
+                            <span class="text-sm sm:text-lg font-mono font-bold text-slate-800">${step.val.toFixed(3)}</span>
                         </div>
                     </div>`;
             });
@@ -766,69 +1351,6 @@
             container.innerHTML = html;
         }
 
-        // Animated Ledger for ADIC
-        function animateLedgerEntries(steps, tbody, onComplete) {
-            let index = 0;
-            function addRow() {
-                if (index >= steps.length) {
-                    if (onComplete) onComplete();
-                    return;
-                }
-                
-                const step = steps[index];
-                const rowClass = step.check ? 'hover:bg-slate-50' : 'bg-red-50 hover:bg-red-100';
-                // FIXED: Dynamic sticky column background
-                const stickyBg = step.check ? 'bg-white' : 'bg-red-50';
-                
-                const textClass = step.check ? 'text-slate-600' : 'text-red-700 font-bold';
-                const icon = step.check ? '✓' : '!';
-                const tr = document.createElement('tr');
-                tr.className = `${rowClass} border-b border-slate-50 last:border-0 transition-colors animate-slide-in`;
-                
-                // Robust Number Formatting with Color Class
-                let rangeText = '<span class="text-gray-400 italic">Calc Error</span>';
-                if (step.interval && step.interval.length === 2 && !isNaN(step.interval[0])) {
-                    rangeText = `<span class="text-slate-400">[</span>${step.interval[0].toFixed(5)}, ${step.interval[1].toFixed(5)}<span class="text-slate-400">]</span>`;
-                }
-
-                tr.innerHTML = `
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-400 sticky-col ${stickyBg}">${(index+1).toString().padStart(2,'0')}</td>
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-bold ${textClass} text-xs">${step.name}</td>
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-700">${rangeText}</td>
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 text-center text-xs font-bold ${step.check?'text-green-600':'text-red-600'}">${icon}</td>
-                `;
-                tbody.appendChild(tr);
-                
-                // Auto scroll
-                const container = tbody.closest('.ledger-scroll');
-                if(container) container.scrollTop = container.scrollHeight;
-
-                index++;
-                setTimeout(addRow, 400); 
-            }
-            addRow();
-        }
-
-        function renderLedgerNormal(steps, tbody) {
-            let html = '';
-            steps.forEach((step, idx) => {
-                // Ensure value exists
-                const valStr = (typeof step.val === 'number' && !isNaN(step.val)) ? step.val.toFixed(5) : "N/A";
-                
-                html += `<tr class="hover:bg-slate-50 border-b border-slate-50 transition-colors animate-slide-in" style="animation-delay: ${idx * 0.1}s">
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-400 sticky-col bg-white">${(idx+1).toString().padStart(2,'0')}</td>
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-bold text-slate-600 text-xs">${step.name}</td>
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 font-mono text-xs text-slate-700">${valStr}</td>
-                    <td class="px-4 py-3 sm:px-6 sm:py-4 text-center text-slate-300">-</td>
-                </tr>`;
-            });
-            tbody.innerHTML = html;
-        }
-
-        // Init
-        setMode('adic');
-        setTimeout(() => setMode('normal'), 100);
-        setMode('normal');
     </script>
 </body>
 </html>
